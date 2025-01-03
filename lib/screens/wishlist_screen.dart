@@ -5,7 +5,7 @@ import 'package:toyota_accessory_app/controllers/wishlist_controller.dart';
 import 'package:toyota_accessory_app/widgets/custom_bottom_nav.dart';
 
 class WishlistScreen extends GetView<WishlistController> {
-  const WishlistScreen({Key? key}) : super(key: key);
+  const WishlistScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

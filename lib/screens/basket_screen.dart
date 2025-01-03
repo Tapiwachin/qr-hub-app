@@ -5,7 +5,7 @@ import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/widgets/custom_bottom_nav.dart';
 
 class BasketScreen extends GetView<BasketController> {
-  const BasketScreen({Key? key}) : super(key: key);
+  const BasketScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

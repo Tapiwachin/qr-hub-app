@@ -4,7 +4,7 @@ import 'package:toyota_accessory_app/controllers/notification_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class NotificationsScreen extends GetView<NotificationController> {
-  const NotificationsScreen({Key? key}) : super(key: key);
+  const NotificationsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

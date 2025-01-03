@@ -7,11 +7,19 @@ import 'package:toyota_accessory_app/screens/search_screen.dart';
 import 'package:toyota_accessory_app/screens/notifications_screen.dart';
 import 'package:toyota_accessory_app/screens/vehicle_detail_screen.dart';
 import 'package:toyota_accessory_app/screens/vehicle_list_screen.dart';
+import 'package:toyota_accessory_app/screens/onboarding_screen.dart';
+import 'package:toyota_accessory_app/screens/splash_screen.dart';
 import 'package:toyota_accessory_app/bindings/vehicle_detail_binding.dart';
 import 'package:toyota_accessory_app/controllers/search_controller.dart'; // Add this
-import 'package:toyota_accessory_app/controllers/notification_controller.dart'; // Add this
+import 'package:toyota_accessory_app/controllers/notification_controller.dart';
+
+import 'package:toyota_accessory_app/bindings/onboarding_binding.dart';
+import 'package:toyota_accessory_app/bindings/splash_binding.dart';
+
 
 class AppRoutes {
+  static const String SPLASH = '/splash';
+  static const String ONBOARDING = '/onboarding';
   static const String HOME = '/';
   static const String WISHLIST = '/wishlist';
   static const String BASKET = '/basket';
@@ -21,6 +29,16 @@ class AppRoutes {
   static const String VEHICLE_LIST = '/vehicle_list'; // <-- Add this route
 
   static final routes = [
+    GetPage(
+      name: SPLASH,
+      page: () => const SplashScreen(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
+      name: ONBOARDING,
+      page: () => const OnboardingScreen(),
+      binding: OnboardingBinding(),
+    ),
     GetPage(
       name: HOME,
       page: () => const HomeScreen(),

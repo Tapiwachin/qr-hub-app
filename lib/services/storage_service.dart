@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
+const String kFirstTimeKey = 'ghRYQbffdcdFQMHmFMwI';
+
 class StorageService extends GetxService {
   late SharedPreferences _prefs;
   bool _initialized = false;
@@ -95,6 +97,20 @@ class StorageService extends GetxService {
       return _prefs.containsKey(key);
     } catch (e) {
       print('Error checking key existence: $e');
+      rethrow;
+    }
+  }
+  bool isFirstTime() {
+    _checkInitialization();
+    return _prefs.getBool(kFirstTimeKey) ?? true;
+  }
+
+  Future<void> setFirstTime(bool value) async {
+    _checkInitialization();
+    try {
+      await _prefs.setBool(kFirstTimeKey, value);
+    } catch (e) {
+      print('Error setting first time flag: $e');
       rethrow;
     }
   }

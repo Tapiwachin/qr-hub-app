@@ -7,7 +7,7 @@ import 'package:toyota_accessory_app/widgets/custom_bottom_nav.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class VehicleDetailScreen extends GetView<VehicleDetailController> {
-  const VehicleDetailScreen({Key? key}) : super(key: key);
+  const VehicleDetailScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

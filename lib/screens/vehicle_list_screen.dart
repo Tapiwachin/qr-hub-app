@@ -6,7 +6,7 @@ import 'package:toyota_accessory_app/widgets/vehicle_card.dart';
 import 'package:toyota_accessory_app/routes/app_routes.dart';
 
 class VehicleListScreen extends GetView<HomeController> {
-  const VehicleListScreen({Key? key}) : super(key: key);
+  const VehicleListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

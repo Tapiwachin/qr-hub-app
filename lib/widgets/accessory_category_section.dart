@@ -10,12 +10,12 @@ class AccessoryCategorySection extends StatefulWidget {
   final Function(Accessory) onAddToBasket;
 
   const AccessoryCategorySection({
-    Key? key,
+    super.key,
     required this.categoryName,
     required this.accessories,
     required this.onAddToWishlist,
     required this.onAddToBasket,
-  }) : super(key: key);
+  });
 
   @override
   State<AccessoryCategorySection> createState() =>

@@ -1,5 +1,6 @@
 // lib/core/theme/app_theme.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Brand Colors
@@ -24,6 +25,11 @@ class AppTheme {
   static const Color error = Color(0xFFDC3545);
   static const Color info = Color(0xFF17A2B8);
 
+  // Surface Colors
+  static const Color surface = Color(0xFFFAFAFA);
+  static const Color background = Color(0xFFF5F5F5);
+  static const Color backgroundAlt = Color(0xFFFFFFFF);
+
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
     colors: [primary, Color(0xFFFF1A1A)],
@@ -31,81 +37,214 @@ class AppTheme {
     end: Alignment.bottomRight,
   );
 
-  // Typography
-  static const String fontFamily = 'Toyota Type';
+  static const LinearGradient surfaceGradient = LinearGradient(
+    colors: [neutral100, neutral200],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
 
-  static const TextTheme textTheme = TextTheme(
-    displayLarge: TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.bold,
-      letterSpacing: -0.5,
+  // Shadows
+  static List<BoxShadow> get shadowSm => [
+    BoxShadow(
+      color: neutral900.withOpacity(0.03),
+      blurRadius: 4,
+      offset: const Offset(0, 2),
     ),
-    displayMedium: TextStyle(
-      fontSize: 28,
-      fontWeight: FontWeight.bold,
-      letterSpacing: -0.5,
+  ];
+
+  static List<BoxShadow> get shadowMd => [
+    BoxShadow(
+      color: neutral900.withOpacity(0.05),
+      blurRadius: 8,
+      offset: const Offset(0, 4),
     ),
-    displaySmall: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.bold,
+  ];
+
+  static List<BoxShadow> get shadowLg => [
+    BoxShadow(
+      color: neutral900.withOpacity(0.08),
+      blurRadius: 16,
+      offset: const Offset(0, 8),
     ),
-    headlineLarge: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
+  ];
+
+  // Typography
+  static TextTheme get textTheme {
+    return TextTheme(
+      displayLarge: GoogleFonts.inter(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.5,
+        color: neutral900,
+      ),
+      displayMedium: GoogleFonts.inter(
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.5,
+        color: neutral900,
+      ),
+      displaySmall: GoogleFonts.inter(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+        color: neutral900,
+      ),
+      headlineLarge: GoogleFonts.inter(
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: neutral900,
+      ),
+      headlineMedium: GoogleFonts.inter(
+        fontSize: 18,
+        fontWeight: FontWeight.w600,
+        color: neutral900,
+      ),
+      titleLarge: GoogleFonts.inter(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+        color: neutral900,
+      ),
+      titleMedium: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: neutral900,
+      ),
+      bodyLarge: GoogleFonts.inter(
+        fontSize: 16,
+        height: 1.5,
+        color: neutral700,
+      ),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 14,
+        height: 1.5,
+        color: neutral700,
+      ),
+      labelLarge: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: neutral900,
+      ),
+    );
+  }
+
+  // Component Themes
+  static CardTheme get cardTheme => CardTheme(
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(Corners.lg),
     ),
-    headlineMedium: TextStyle(
+    clipBehavior: Clip.antiAlias,
+    color: neutral100,
+  );
+
+  static AppBarTheme get appBarTheme => AppBarTheme(
+    elevation: 0,
+    backgroundColor: neutral100,
+    foregroundColor: neutral900,
+    centerTitle: true,
+    titleTextStyle: GoogleFonts.inter(
       fontSize: 18,
       fontWeight: FontWeight.w600,
+      color: neutral900,
     ),
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      height: 1.5,
-    ),
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      height: 1.5,
-    ),
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
+    iconTheme: IconThemeData(color: neutral900),
+  );
+
+  static ElevatedButtonThemeData get elevatedButtonTheme => ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      elevation: 0,
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.lg,
+        vertical: Spacing.md,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Corners.md),
+      ),
+      foregroundColor: neutral100,
+      backgroundColor: primary,
     ),
   );
 
-  // ThemeData
+  static OutlinedButtonThemeData get outlinedButtonTheme => OutlinedButtonThemeData(
+    style: OutlinedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.lg,
+        vertical: Spacing.md,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(Corners.md),
+      ),
+      foregroundColor: primary,
+      side: const BorderSide(color: primary, width: 1.5),
+    ),
+  );
+
+  static TextButtonThemeData get textButtonTheme => TextButtonThemeData(
+    style: TextButton.styleFrom(
+      padding: const EdgeInsets.symmetric(
+        horizontal: Spacing.md,
+        vertical: Spacing.sm,
+      ),
+      foregroundColor: primary,
+      textStyle: textTheme.labelLarge,
+    ),
+  );
+
+  static InputDecorationTheme get inputDecorationTheme => InputDecorationTheme(
+    filled: true,
+    fillColor: neutral100,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Corners.md),
+      borderSide: BorderSide(color: neutral300),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Corners.md),
+      borderSide: BorderSide(color: neutral300),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Corners.md),
+      borderSide: const BorderSide(color: primary, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(Corners.md),
+      borderSide: BorderSide(color: error),
+    ),
+    contentPadding: const EdgeInsets.all(Spacing.md),
+  );
+
+  // Theme Data
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.light(
         primary: primary,
         secondary: secondary,
-        surface: neutral100,
-        background: neutral200,
+        surface: surface,
         error: error,
         onPrimary: neutral100,
         onSecondary: neutral100,
         onSurface: neutral900,
-        onBackground: neutral900,
         onError: neutral100,
       ),
       textTheme: textTheme,
-      // Card Theme
-      cardTheme: CardTheme(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+      cardTheme: cardTheme,
+      appBarTheme: appBarTheme,
+      elevatedButtonTheme: elevatedButtonTheme,
+      outlinedButtonTheme: outlinedButtonTheme,
+      textButtonTheme: textButtonTheme,
+      inputDecorationTheme: inputDecorationTheme,
+      scaffoldBackgroundColor: background,
+      dividerTheme: DividerThemeData(
+        color: neutral300,
+        space: Spacing.md,
+        thickness: 1,
       ),
-      // Button Theme
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(
-            horizontal: Spacing.lg,
-            vertical: Spacing.md,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: neutral900,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(color: neutral100),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.md),
         ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
@@ -121,10 +260,11 @@ class Spacing {
   static const double xxl = 48;
 }
 
-// Border Radius
 class Corners {
+  static const double xs = 4;
   static const double sm = 8;
   static const double md = 12;
   static const double lg = 16;
   static const double xl = 24;
+  static const double full = 999;
 }

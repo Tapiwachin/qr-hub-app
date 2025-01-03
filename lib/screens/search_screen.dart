@@ -7,7 +7,7 @@ import 'package:toyota_accessory_app/widgets/accessory_card.dart';
 import 'package:toyota_accessory_app/routes/app_routes.dart';
 
 class SearchScreen extends GetView<AppSearchController> {
-  const SearchScreen({Key? key}) : super(key: key);
+  const SearchScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

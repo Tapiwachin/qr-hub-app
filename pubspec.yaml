@@ -32,6 +32,7 @@ dependencies:
   dotted_border: ^2.0.0+2
   dotted_line: ^3.2.2
   shimmer: ^3.0.0
+  flutter_native_splash: ^2.4.2
 
   # Navigation & Gestures
   go_router: ^14.3.0
@@ -79,4 +80,15 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - .env 
+    - .env
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/images/toyota_logo.png
+  # Optional configurations
+  android_12:
+    image: assets/images/toyota_logo.png
+    color: "#FFFFFF"
+  ios: true
+  android: true
+  web: false

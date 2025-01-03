@@ -42,6 +42,8 @@ class Accessory {
     );
   }
 
+  get isNew => null;
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,

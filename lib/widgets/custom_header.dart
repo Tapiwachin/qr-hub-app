@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
-import 'package:toyota_accessory_app/core/theme/app_styles.dart';
 import 'package:toyota_accessory_app/core/utils/extensions.dart'; // Add this import
 
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({Key? key}) : super(key: key);
+  const CustomHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

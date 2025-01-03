@@ -13,7 +13,7 @@ class ApiService extends GetxService {
   void onInit() {
     super.onInit();
     _dio = Dio(BaseOptions(
-      baseUrl: 'http://localhost:8055/api-adaptor',
+      baseUrl: 'http://192.168.1.208:8055/api-adaptor',
       headers: {
         'Content-Type': 'application/json',
       },

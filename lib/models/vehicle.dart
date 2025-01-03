@@ -40,6 +40,8 @@ class Vehicle {
           : null,
     );
   }
+
+  get accessoryCount => null;
 }
 
 class VehicleAccessory {

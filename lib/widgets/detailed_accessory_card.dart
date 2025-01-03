@@ -9,12 +9,12 @@ class DetailedAccessoryCard extends StatelessWidget {
   final VoidCallback onAddToBasket;
 
   const DetailedAccessoryCard({
-    Key? key,
+    super.key,
     required this.accessory,
     this.onTap,
     required this.onAddToWishlist,
     required this.onAddToBasket,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +87,13 @@ class DetailedAccessoryCard extends StatelessWidget {
           const SizedBox(height: 8.0),
 
           // Accessory Part Number
-          if (accessory.partNumber != null && accessory.partNumber!.isNotEmpty)
+          if (accessory.partNumber.isNotEmpty)
             Row(
               children: [
                 Icon(Icons.article_outlined, size: 16, color: Colors.grey[600]),
                 const SizedBox(width: 4.0),
                 Text(
-                  'Part Number: ${accessory.partNumber!}',
+                  'Part Number: ${accessory.partNumber}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: Colors.grey[700],
                         fontStyle: FontStyle.italic,

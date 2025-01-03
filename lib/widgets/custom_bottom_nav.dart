@@ -4,7 +4,7 @@ import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
 class CustomBottomNavBar extends GetView<BasketController> {
-  const CustomBottomNavBar({Key? key}) : super(key: key);
+  const CustomBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +39,12 @@ class CustomBottomNavBar extends GetView<BasketController> {
               _buildNavItem(
                 icon: Icons.directions_car_rounded,
                 label: 'Vehicles',
-                onTap: () => Get.toNamed('/vehicles'),
+                onTap: () => Get.toNamed('/vehicle_list'),
               ),
               _buildNavItem(
                 icon: Icons.bookmark_rounded,
                 label: 'Wishlist',
+                badge: controller.itemCount.toString(),
                 onTap: () => Get.toNamed('/wishlist'),
               ),
               _buildNavItem(
