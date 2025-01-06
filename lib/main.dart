@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:toyota_accessory_app/routes/app_routes.dart';
 import 'package:toyota_accessory_app/bindings/initial_binding.dart';
 import 'package:toyota_accessory_app/services/storage_service.dart';
-// import 'package:toyota_accessory_app/core/theme/app_theme.dart';
+import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,15 +26,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // return GetMaterialApp(
+    //   title: 'Toyota Accessory App',
+    //   theme: ThemeData(
+    //     colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
+    //     useMaterial3: true,
+    //   ),
+    //   initialBinding: InitialBinding(),
+    //   getPages: AppRoutes.routes,
+    //   //initialRoute: AppRoutes.HOME,
+    //   initialRoute: AppRoutes.SPLASH,
+    // );
     return GetMaterialApp(
       title: 'Toyota Accessory App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-        useMaterial3: true,
-      ),
+      theme: AppTheme.darkTheme,
       initialBinding: InitialBinding(),
       getPages: AppRoutes.routes,
-      //initialRoute: AppRoutes.HOME,
       initialRoute: AppRoutes.SPLASH,
     );
   }

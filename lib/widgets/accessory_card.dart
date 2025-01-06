@@ -25,19 +25,52 @@ class AccessoryCard extends StatelessWidget {
       decoration: AppStyles.elevatedCardDecoration,
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.all(Spacing.sm),
+      height: 120, // Fixed height for horizontal cards
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
             children: [
-              _buildImageSection(),
-              _buildContentSection(context),
-              _buildFooterSection(context),
+              // Left: Image
+              SizedBox(
+                width: 120, // Square aspect ratio
+                child: _buildImageSection(),
+              ),
+              // Middle: Content
+              Expanded(
+                child: _buildContentSection(context),
+              ),
+              // Right: Actions
+              _buildActionsSection(context),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionsSection(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(Spacing.sm),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            onPressed: onWishlistTap,
+            icon: Icon(
+              isInWishlist ? Icons.favorite : Icons.favorite_border,
+              color: isInWishlist ? AppTheme.primary : AppTheme.neutral700,
+            ),
+          ),
+          IconButton(
+            onPressed: onTap,
+            icon: Icon(
+              Icons.shopping_cart_outlined,
+              color: AppTheme.primary,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -56,25 +89,6 @@ class AccessoryCard extends StatelessWidget {
           )
               : _buildErrorWidget(),
         ),
-        if (accessory.isNew)
-          Positioned(
-            top: Spacing.sm,
-            left: Spacing.sm,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: Spacing.sm,
-                vertical: Spacing.xs,
-              ),
-              decoration: AppStyles.badgeDecoration(color: AppTheme.success),
-              child: Text(
-                'NEW',
-                style: AppTheme.textTheme.bodySmall?.copyWith(
-                  color: AppTheme.success,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
         if (onWishlistTap != null)
           Positioned(
             top: Spacing.sm,

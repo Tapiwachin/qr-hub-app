@@ -1,5 +1,5 @@
 // lib/services/api_service.dart
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Response;
 import 'package:get/get.dart';
 import 'package:toyota_accessory_app/models/vehicle.dart';
 import 'package:toyota_accessory_app/models/video.dart';
@@ -29,13 +29,10 @@ class ApiService extends GetxService {
 
   Future<List<Vehicle>> getVehicles({String? accessoryType}) async {
     try {
-      final Map<String, dynamic> queryParams = {};
-      if (accessoryType != null) {
-        queryParams['accessory_type'] = accessoryType;
-      }
-
-      final response =
-          await _dio.get('/vehicles', queryParameters: queryParams);
+      final response = await _dio.get(
+        '/vehicles',
+        queryParameters: accessoryType != null ? {'accessory_type': accessoryType} : null,
+      );
 
       if (response.data == null || response.data['data'] == null) {
         throw Exception('Invalid response format');
@@ -50,39 +47,44 @@ class ApiService extends GetxService {
     }
   }
 
-  // Add getVehicleById method
-  Future<Vehicle> getVehicleById(String id, {String? accessoryType}) async {
+  Future<Vehicle> getVehicleById(String id) async {
     try {
-      final Map<String, dynamic> queryParams = {};
-      if (accessoryType != null) {
-        queryParams['accessory_type'] = accessoryType;
-      }
-
-      final response = await _dio.get(
-        '/vehicles/$id',
-        queryParameters: queryParams,
-      );
-
-      if (response.data == null) {
-        throw Exception('Vehicle not found');
-      }
-
-      // Handle both direct data and data wrapped in a data field
-      final vehicleData = response.data is Map<String, dynamic> &&
-              response.data.containsKey('data')
-          ? response.data['data']
-          : response.data;
-
-      return Vehicle.fromJson(vehicleData);
-    } on DioException catch (e) {
-      print('DioError fetching vehicle: $e');
-      if (e.response?.statusCode == 404) {
-        throw Exception('Vehicle not found');
-      }
-      throw Exception('Failed to fetch vehicle details');
+      final response = await _dio.get('/vehicles/$id');
+      return Vehicle.fromJson(response.data);
     } catch (e) {
       print('Error fetching vehicle: $e');
       throw Exception('Failed to fetch vehicle details');
+    }
+  }
+
+  Future<List<Accessory>> getAccessoriesForVehicle(String vehicleId) async {
+    try {
+      final response = await _dio.get('/vehicles/$vehicleId');
+      final vehicleData = response.data;
+
+      if (vehicleData == null || vehicleData['accessories'] == null) {
+        return [];
+      }
+
+      return (vehicleData['accessories'] as List).map((accessoryWrapper) {
+        final accessoryData = accessoryWrapper['accessories_id'];
+        if (accessoryData == null) return null;
+
+        // Add category name if available
+        if (accessoryData['category'] != null) {
+          accessoryData['category_name'] = accessoryData['category']['name'];
+        }
+
+        // Determine type from the accessory data or default to 'exterior'
+        String type = accessoryData['type']?.toString().toLowerCase() ?? 'exterior';
+        accessoryData['type'] = type;
+
+        return Accessory.fromJson(accessoryData);
+      }).whereType<Accessory>().toList();
+
+    } catch (e) {
+      print('Error fetching accessories: $e');
+      throw Exception('Failed to fetch accessories');
     }
   }
 
@@ -90,9 +92,7 @@ class ApiService extends GetxService {
     try {
       final response = await _dio.get(
         '/videos',
-        queryParameters: {
-          'limit': limit,
-        },
+        queryParameters: {'limit': limit},
       );
 
       if (response.data == null || response.data['data'] == null) {
@@ -112,9 +112,7 @@ class ApiService extends GetxService {
     try {
       final response = await _dio.get(
         '/vehicles',
-        queryParameters: {
-          'search': query,
-        },
+        queryParameters: {'search': query},
       );
 
       if (response.data == null || response.data['data'] == null) {
@@ -134,9 +132,7 @@ class ApiService extends GetxService {
     try {
       final response = await _dio.get(
         '/accessories',
-        queryParameters: {
-          'search': query,
-        },
+        queryParameters: {'search': query},
       );
 
       if (response.data == null || response.data['data'] == null) {

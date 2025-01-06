@@ -53,6 +53,12 @@ class CustomBottomNavBar extends GetView<BasketController> {
                 badge: controller.itemCount.toString(),
                 onTap: () => Get.toNamed('/basket'),
               ),
+              _buildNavItem(
+                icon: Icons.notifications_rounded,
+                label: 'Alerts',
+                badge: '2',
+                onTap: () => Get.toNamed('/notifications'),
+              ),
             ],
           ),
         ),

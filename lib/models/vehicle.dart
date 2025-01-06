@@ -21,6 +21,17 @@ class Vehicle {
     this.videos,
   });
 
+
+  factory Vehicle.empty() {
+    return Vehicle(
+      id: '',
+      name: '',
+      description: '',
+      image: '',
+      accessoryType: '',
+    );
+  }
+
   factory Vehicle.fromJson(Map<String, dynamic> json) {
     return Vehicle(
       id: json['id'].toString(),

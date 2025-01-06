@@ -29,6 +29,7 @@ class AppTheme {
   static const Color surface = Color(0xFFFAFAFA);
   static const Color background = Color(0xFFF5F5F5);
   static const Color backgroundAlt = Color(0xFFFFFFFF);
+  static const Color cardBackground = Color(0xFF2A2A2A);
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
@@ -240,6 +241,87 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: neutral900,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(color: neutral100),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.md),
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData.dark().copyWith(
+      useMaterial3: true,
+      scaffoldBackgroundColor: background,
+      colorScheme: ColorScheme.dark(
+        primary: primary,
+        secondary: accent,
+        surface: neutral900,
+        background: neutral900,
+        error: error,
+        onPrimary: neutral100,
+        onSecondary: neutral100,
+        onSurface: neutral100,
+        onBackground: neutral100,
+        onError: neutral100,
+      ),
+      textTheme: textTheme.apply(
+        bodyColor: neutral100,
+        displayColor: neutral100,
+      ),
+      cardTheme: CardTheme(
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Corners.lg),
+        ),
+        clipBehavior: Clip.antiAlias,
+        color: neutral800,
+      ),
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+        backgroundColor: neutral900,
+        foregroundColor: neutral100,
+        centerTitle: true,
+        titleTextStyle: GoogleFonts.inter(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: neutral100,
+        ),
+        iconTheme: IconThemeData(color: neutral100),
+      ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: neutral900,
+        selectedItemColor: primary,
+        unselectedItemColor: neutral500,
+        elevation: 8,
+        type: BottomNavigationBarType.fixed,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        fillColor: neutral800,
+        filled: true,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Corners.md),
+          borderSide: BorderSide(color: neutral700),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Corners.md),
+          borderSide: BorderSide(color: neutral700),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(Corners.md),
+          borderSide: BorderSide(color: primary, width: 2),
+        ),
+        hintStyle: TextStyle(color: neutral600),
+      ),
+      dividerColor: neutral800,
+      dialogBackgroundColor: neutral800,
+      popupMenuTheme: PopupMenuThemeData(
+        color: neutral800,
+        elevation: 8,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: neutral800,
         contentTextStyle: textTheme.bodyMedium?.copyWith(color: neutral100),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Corners.md),
