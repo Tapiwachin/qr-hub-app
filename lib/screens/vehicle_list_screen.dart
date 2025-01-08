@@ -29,7 +29,7 @@ class VehicleListScreen extends GetView<HomeController> {
           return GridView.builder(
             padding: const EdgeInsets.all(16),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+              crossAxisCount: 2, // Two items per row
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
               childAspectRatio: 3 / 4, // Adjust as needed for your design
@@ -43,7 +43,7 @@ class VehicleListScreen extends GetView<HomeController> {
                   AppRoutes.VEHICLE_DETAIL,
                   arguments: vehicle,
                 ),
-                isGridView: true,
+                cardType: CardType.listing, // Specify the card type for listing
               );
             },
           );

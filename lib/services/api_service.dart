@@ -66,27 +66,27 @@ class ApiService extends GetxService {
         return [];
       }
 
+      // Parse accessories
       return (vehicleData['accessories'] as List).map((accessoryWrapper) {
         final accessoryData = accessoryWrapper['accessories_id'];
         if (accessoryData == null) return null;
+
+        // Normalize the type field
+        accessoryData['type'] = accessoryData['type']?.toString().toLowerCase() ?? 'exterior';
 
         // Add category name if available
         if (accessoryData['category'] != null) {
           accessoryData['category_name'] = accessoryData['category']['name'];
         }
 
-        // Determine type from the accessory data or default to 'exterior'
-        String type = accessoryData['type']?.toString().toLowerCase() ?? 'exterior';
-        accessoryData['type'] = type;
-
         return Accessory.fromJson(accessoryData);
-      }).whereType<Accessory>().toList();
-
+      }).whereType<Accessory>().toList(); // Filter out nulls
     } catch (e) {
       print('Error fetching accessories: $e');
       throw Exception('Failed to fetch accessories');
     }
   }
+
 
   Future<List<Video>> getVideos({int limit = 10}) async {
     try {

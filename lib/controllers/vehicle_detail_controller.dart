@@ -7,8 +7,8 @@ import 'package:toyota_accessory_app/controllers/wishlist_controller.dart';
 import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
-
-class VehicleDetailController extends GetxController with GetSingleTickerProviderStateMixin {
+class VehicleDetailController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final ApiService _apiService = Get.find();
   final WishlistController _wishlistController = Get.find();
   final BasketController _basketController = Get.find();
@@ -24,16 +24,37 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
   void onInit() {
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
-    vehicle.value = Get.arguments as Vehicle;
-    fetchAccessories();
+
+    // Ensure vehicle is properly passed
+    final Vehicle? vehicleData = Get.arguments as Vehicle?;
+    if (vehicleData != null) {
+      vehicle.value = vehicleData;
+      fetchAccessories();
+    } else {
+      Get.snackbar('Error', 'Failed to load vehicle data');
+    }
   }
 
   Future<void> fetchAccessories() async {
     isLoading.value = true;
     try {
       final accessories = await _apiService.getAccessoriesForVehicle(vehicle.value.id);
-      exteriorAccessories.value = accessories.where((a) => a.type == 'exterior').toList();
-      interiorAccessories.value = accessories.where((a) => a.type == 'interior').toList();
+
+      // Clear lists to avoid duplication
+      exteriorAccessories.clear();
+      interiorAccessories.clear();
+
+      // Filter accessories based on type
+      for (final accessory in accessories) {
+        if (accessory.type == 'exterior') {
+          exteriorAccessories.add(accessory);
+        } else if (accessory.type == 'interior') {
+          interiorAccessories.add(accessory);
+        }
+      }
+
+      print('Exterior Accessories: ${exteriorAccessories.length}');
+      print('Interior Accessories: ${interiorAccessories.length}');
     } catch (e) {
       Get.snackbar('Error', 'Failed to load accessories');
     } finally {
@@ -41,12 +62,14 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
     }
   }
 
+
   void onSearchChanged(String query) {
     if (query.isEmpty) {
-      fetchAccessories();
+      fetchAccessories(); // Reset lists if search query is empty
       return;
     }
 
+    // Filter based on the active tab
     if (tabController.index == 0) {
       exteriorAccessories.value = exteriorAccessories
           .where((a) => a.name.toLowerCase().contains(query.toLowerCase()))
@@ -64,7 +87,7 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
       builder: (context) => Container(
         padding: EdgeInsets.all(Spacing.md),
         decoration: BoxDecoration(
-          color: AppTheme.cardBackground,
+          color: AppTheme.neutral900,
           borderRadius: BorderRadius.vertical(top: Radius.circular(Corners.lg)),
         ),
         child: Column(
@@ -75,7 +98,7 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () {
-                      _wishlistController.addToWishlist(context, accessory);
+                      addToWishlist(context, accessory);
                       Get.back();
                     },
                     icon: Icon(
@@ -90,7 +113,7 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                      _basketController.addItem(context, accessory);
+                      addToBasket(context, accessory);
                       Get.back();
                     },
                     icon: Icon(Icons.shopping_cart),

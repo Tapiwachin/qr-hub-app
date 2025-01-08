@@ -110,6 +110,12 @@ class VehicleDetailScreen extends GetView<VehicleDetailController> {
 
   Widget _buildAccessoryList(RxList<Accessory> accessories) {
     return Obx(() {
+      if (controller.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
       if (accessories.isEmpty) {
         return Center(
           child: Text(

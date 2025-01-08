@@ -1,23 +1,34 @@
-// lib/core/theme/app_styles.dart
 import 'package:flutter/material.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
 class AppStyles {
   // Card & Container Styles
   static BoxDecoration get cardDecoration => BoxDecoration(
-    color: AppTheme.neutral100,
+    color: AppTheme.neutral100, // Reference to a defined color
     borderRadius: BorderRadius.circular(Corners.lg),
-    boxShadow: AppTheme.shadowSm,
+    boxShadow: [
+      BoxShadow(
+        color: AppTheme.neutral900.withOpacity(0.05), // Replace shadowMd
+        blurRadius: 8,
+        offset: const Offset(0, 4),
+      ),
+    ],
   );
 
   static BoxDecoration get elevatedCardDecoration => BoxDecoration(
-    color: AppTheme.neutral100,
+    color: AppTheme.neutral100, // Reference to a defined color
     borderRadius: BorderRadius.circular(Corners.lg),
-    boxShadow: AppTheme.shadowMd,
+    boxShadow: [
+      BoxShadow(
+        color: AppTheme.neutral900.withOpacity(0.08), // Replace shadowMd
+        blurRadius: 16,
+        offset: const Offset(0, 8),
+      ),
+    ],
   );
 
   static BoxDecoration get containerDecoration => BoxDecoration(
-    color: AppTheme.surface,
+    color: AppTheme.neutral200, // Replace surface
     borderRadius: BorderRadius.circular(Corners.md),
     border: Border.all(color: AppTheme.neutral300),
   );
@@ -26,11 +37,17 @@ class AppStyles {
   static BoxDecoration get imageContainerDecoration => BoxDecoration(
     borderRadius: BorderRadius.circular(Corners.lg),
     color: AppTheme.neutral200,
-    boxShadow: AppTheme.shadowSm,
+    boxShadow: [
+      BoxShadow(
+        color: AppTheme.neutral900.withOpacity(0.03), // Replace shadowSm
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ],
   );
 
   static BoxDecoration get roundedImageDecoration => BoxDecoration(
-    borderRadius: BorderRadius.circular(Corners.full),
+    borderRadius: BorderRadius.circular(Corners.md),
     color: AppTheme.neutral200,
     border: Border.all(color: AppTheme.neutral300, width: 2),
   );
@@ -65,23 +82,23 @@ class AppStyles {
   // Input Styles
   static InputDecoration get searchInputDecoration => InputDecoration(
     filled: true,
-    fillColor: AppTheme.surface,
+    fillColor: AppTheme.neutral200, // Replace surface
     hintText: 'Search...',
     hintStyle: AppTheme.textTheme.bodyMedium?.copyWith(
       color: AppTheme.neutral500,
     ),
     prefixIcon: Icon(Icons.search, color: AppTheme.neutral600),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(Corners.lg),
+      borderRadius: BorderRadius.circular(Corners.md),
       borderSide: BorderSide.none,
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(Corners.lg),
+      borderRadius: BorderRadius.circular(Corners.md),
       borderSide: BorderSide(color: AppTheme.neutral300),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(Corners.lg),
-      borderSide: BorderSide(color: AppTheme.primary),
+      borderRadius: BorderRadius.circular(Corners.md),
+      borderSide: BorderSide(color: AppTheme.primary, width: 2),
     ),
     contentPadding: const EdgeInsets.symmetric(
       horizontal: Spacing.lg,

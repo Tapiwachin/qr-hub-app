@@ -9,7 +9,6 @@ import 'package:toyota_accessory_app/widgets/vehicle_card.dart';
 import 'package:toyota_accessory_app/widgets/custom_bottom_nav.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 import 'package:toyota_accessory_app/core/theme/app_styles.dart';
-// import 'package:toyota_accessory_app/widgets/accessory_type_tabs.dart';
 
 class HomeScreen extends GetView<HomeController> {
   const HomeScreen({super.key});
@@ -17,6 +16,7 @@ class HomeScreen extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.backgroundMain,
       body: SafeArea(
         child: Column(
           children: [
@@ -28,9 +28,10 @@ class HomeScreen extends GetView<HomeController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildVideoSection(),
-                      SizedBox(height: Spacing.md),
-                      _buildFeaturedVehicles(context),
+                      const SizedBox(height: 16),
+                      _VideoSection(controller: controller),
+                      const SizedBox(height: 16),
+                      _FeaturedVehiclesSection(controller: controller),
                     ],
                   ),
                 ),
@@ -42,30 +43,57 @@ class HomeScreen extends GetView<HomeController> {
       bottomNavigationBar: const CustomBottomNavBar(),
     );
   }
+}
 
-  Widget _buildVideoSection() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Spacing.md),
+class _VideoSection extends StatelessWidget {
+  final HomeController controller;
+
+  const _VideoSection({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppTheme.neutral900, // Background color for the video section
+      padding: const EdgeInsets.symmetric(vertical: Spacing.md),
       child: Obx(() {
         if (controller.featuredVideos.isEmpty) {
-          return _buildPlaceholderVideo();
+          return _buildPlaceholderVideo(); // Display placeholder if no videos
         }
 
-        return CarouselSlider.builder(
-          itemCount: controller.featuredVideos.length,
-          itemBuilder: (context, index, _) => FeaturedVideoCard(
-            video: controller.featuredVideos[index],
-            onTap: () => controller.playVideo(controller.featuredVideos[index]),
-          ),
-          options: CarouselOptions(
-            height: 220,
-            viewportFraction: 0.9,
-            aspectRatio: 16/9,
-            autoPlay: true,
-            enlargeCenterPage: true,
-            enableInfiniteScroll: controller.featuredVideos.length > 1,
-            autoPlayInterval: Duration(seconds: 5),
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
+              child: Text(
+                'Featured Videos',
+                style: AppTheme.textTheme.headlineLarge?.copyWith(
+                  color: AppTheme
+                      .neutral100, // White text color for dark background
+                ),
+              ),
+            ),
+            const SizedBox(height: Spacing.sm),
+            CarouselSlider.builder(
+              itemCount: controller.featuredVideos.length,
+              itemBuilder: (context, index, _) => GestureDetector(
+                onTap: () =>
+                    controller.playVideo(controller.featuredVideos[index]),
+                child: FeaturedVideoCard(
+                  video: controller.featuredVideos[index],
+                ),
+              ),
+              options: CarouselOptions(
+                height: 220,
+                viewportFraction: 0.9,
+                autoPlay: true,
+                enlargeCenterPage: true,
+                autoPlayInterval: const Duration(seconds: 5),
+                aspectRatio: 16 / 9,
+                enableInfiniteScroll: controller.featuredVideos.length > 1,
+              ),
+            ),
+          ],
         );
       }),
     );
@@ -74,9 +102,9 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildPlaceholderVideo() {
     return Container(
       height: 220,
-      margin: EdgeInsets.symmetric(horizontal: Spacing.md),
+      margin: const EdgeInsets.symmetric(horizontal: Spacing.md),
       decoration: BoxDecoration(
-        color: AppTheme.neutral200,
+        color: AppTheme.neutral800, // Darker gray placeholder background
         borderRadius: BorderRadius.circular(Corners.lg),
       ),
       child: Stack(
@@ -85,16 +113,16 @@ class HomeScreen extends GetView<HomeController> {
           Icon(
             Icons.video_library_outlined,
             size: 48,
-            color: AppTheme.neutral500,
+            color: AppTheme.neutral500, // Lighter gray for placeholder icon
           ),
-          Container(decoration: AppStyles.gradientOverlay),
+          Container(decoration: AppStyles.gradientOverlay), // Gradient overlay
           Positioned(
             bottom: Spacing.md,
             left: Spacing.md,
             child: Text(
-              'Featured Videos',
-              style: AppTheme.textTheme.titleMedium?.copyWith(
-                color: AppTheme.neutral100,
+              'No Videos Available',
+              style: AppTheme.textTheme.bodyMedium?.copyWith(
+                color: AppTheme.neutral100, // White text color
               ),
             ),
           ),
@@ -102,63 +130,119 @@ class HomeScreen extends GetView<HomeController> {
       ),
     );
   }
+}
 
-  Widget _buildFeaturedVehicles(BuildContext context) {
+class _FeaturedVehiclesSection extends StatefulWidget {
+  final HomeController controller;
+
+  const _FeaturedVehiclesSection({required this.controller});
+
+  @override
+  State<_FeaturedVehiclesSection> createState() => _FeaturedVehiclesSectionState();
+}
+
+class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
+  late PageController _pageController;
+  double _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.85)
+      ..addListener(() {
+        setState(() {
+          _currentPage = _pageController.page ?? 0;
+        });
+      });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final featuredVehicles = widget.controller.vehicles.take(5).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Heading Section
         Padding(
           padding: EdgeInsets.symmetric(horizontal: Spacing.md),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Explore our diverse selection of ',
+                      style: AppTheme.textTheme.headlineMedium?.copyWith(
+                        fontSize: 30,
+                        height: 63 / 55,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.88,
+                        color: AppTheme.neutral900,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Toyota Accessories.',
+                      style: AppTheme.textTheme.headlineMedium?.copyWith(
+                        fontSize: 30,
+                        height: 63 / 55,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0,
+                        color: AppTheme.neutral900,
+                      ),
+                    ),
+                  ],
+                ),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox(height: Spacing.sm),
+              Row(
                 children: [
                   Text(
-                    'Featured Models',
-                    style: AppTheme.textTheme.titleLarge,
+                    'FEATURED MODELS',
+                    style: TextStyle(
+                      color: AppTheme.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  Text(
-                    'Popular Toyota vehicles',
-                    style: AppTheme.textTheme.bodySmall?.copyWith(
-                      color: AppTheme.neutral600,
+                  const Spacer(),
+                  TextButton.icon(
+                    onPressed: () => Get.toNamed(AppRoutes.VEHICLE_LIST),
+                    icon: const Icon(Icons.arrow_forward,
+                        size: 18, color: AppTheme.neutral900),
+                    label: Text(
+                      'View All',
+                      style: AppTheme.textTheme.bodyMedium?.copyWith(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.neutral900,
+                      ),
                     ),
                   ),
                 ],
               ),
-              Spacer(),
-              TextButton(
-                onPressed: () => Get.toNamed(AppRoutes.VEHICLE_LIST),
-                child: Text('View All'),
-              ),
             ],
           ),
         ),
-        SizedBox(height: Spacing.sm),
+        const SizedBox(height: Spacing.sm),
+
+        // Carousel Section
         SizedBox(
-          height: 220,
-          child: Obx(() {
-            if (controller.isLoading.value && controller.vehicles.isEmpty) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            final featuredVehicles = controller.vehicles.take(5).toList();
-            if (featuredVehicles.isEmpty) {
-              return Center(
-                child: Text(
-                  'No vehicles available',
-                  style: AppTheme.textTheme.bodyLarge?.copyWith(
-                    color: AppTheme.neutral600,
-                  ),
-                ),
-              );
-            }
-
-            return PageView.builder(
-              controller: PageController(viewportFraction: 0.85),
-              padEnds: false,
-              itemCount: featuredVehicles.length,
-              itemBuilder: (context, index) => Padding(
+          height: 300, // Adjust to the desired card height
+          child: PageView.builder(
+            controller: _pageController,
+            physics: const BouncingScrollPhysics(),
+            itemCount: featuredVehicles.length,
+            itemBuilder: (context, index) {
+              return Padding(
                 padding: EdgeInsets.only(
                   left: index == 0 ? Spacing.md : Spacing.xs,
                   right: index == featuredVehicles.length - 1 ? Spacing.md : Spacing.xs,
@@ -169,11 +253,36 @@ class HomeScreen extends GetView<HomeController> {
                     AppRoutes.VEHICLE_DETAIL,
                     arguments: featuredVehicles[index],
                   ),
-                  isGridView: false,
+                  cardType: CardType.featured, // Use featured layout
+                ),
+              );
+            },
+          ),
+        ),
+
+
+        const SizedBox(height: Spacing.sm),
+
+        // Scroll Progress Bar
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: Spacing.md),
+          child: Container(
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppTheme.neutral300, // Light gray background
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: (_currentPage + 1) / (featuredVehicles.length),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppTheme.primary, // Toyota Red
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-            );
-          }),
+            ),
+          ),
         ),
       ],
     );
