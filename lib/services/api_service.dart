@@ -5,6 +5,7 @@ import 'package:toyota_accessory_app/models/vehicle.dart';
 import 'package:toyota_accessory_app/models/video.dart';
 import 'package:toyota_accessory_app/models/accessory.dart';
 import 'package:toyota_accessory_app/models/notification.dart';
+import 'package:toyota_accessory_app/models/dealer.dart';
 
 class ApiService extends GetxService {
   late final Dio _dio;
@@ -13,7 +14,7 @@ class ApiService extends GetxService {
   void onInit() {
     super.onInit();
     _dio = Dio(BaseOptions(
-      baseUrl: 'http://192.168.1.208:8055/api-adaptor',
+      baseUrl: 'http://10.0.2.2:8055/api-adaptor',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -50,6 +51,7 @@ class ApiService extends GetxService {
   Future<Vehicle> getVehicleById(String id) async {
     try {
       final response = await _dio.get('/vehicles/$id');
+      print('Vehicle API Response: ${response.data}'); // Debug log
       return Vehicle.fromJson(response.data);
     } catch (e) {
       print('Error fetching vehicle: $e');
@@ -62,6 +64,8 @@ class ApiService extends GetxService {
       final response = await _dio.get('/vehicles/$vehicleId');
       final vehicleData = response.data;
 
+      print('Tapiwa Text: ${response.data}');
+
       if (vehicleData == null || vehicleData['accessories'] == null) {
         return [];
       }
@@ -71,7 +75,7 @@ class ApiService extends GetxService {
         final accessoryData = accessoryWrapper['accessories_id'];
         if (accessoryData == null) return null;
 
-        // Normalize the type field
+        // Ensure the type field is extracted and normalized
         accessoryData['type'] = accessoryData['type']?.toString().toLowerCase() ?? 'exterior';
 
         // Add category name if available
@@ -164,4 +168,23 @@ class ApiService extends GetxService {
       throw Exception('Failed to fetch notifications');
     }
   }
+
+  Future<List<Dealer>> getDealers() async {
+    try {
+      final response = await _dio.get('/dealers');
+      if (response.data == null || response.data['data'] == null) {
+        throw Exception('Invalid response format');
+      }
+
+      // Extract 'data' key
+      return (response.data['data'] as List<dynamic>)
+          .map((json) => Dealer.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      print('Error fetching dealers: $e');
+      throw Exception('Failed to fetch dealers');
+    }
+  }
+
+
 }

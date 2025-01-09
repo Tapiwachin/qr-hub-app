@@ -8,20 +8,10 @@ class BasketController extends GetxController {
   final basketItems = <Accessory>[].obs;
   static const String storageKey = 'basket_items';
 
-  final RxDouble total = 0.0.obs;
-
   @override
   void onInit() {
     super.onInit();
     loadBasketFromStorage();
-    ever(basketItems, (_) => calculateTotal());
-  }
-
-  void calculateTotal() {
-    total.value = basketItems.fold(
-      0,
-      (sum, item) => sum + (item.price ?? 0),
-    );
   }
 
   Future<void> loadBasketFromStorage() async {
@@ -50,7 +40,7 @@ class BasketController extends GetxController {
       SnackBar(
         content: Text(
           '$title: $message',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.black87,
         behavior: SnackBarBehavior.floating,
@@ -60,34 +50,35 @@ class BasketController extends GetxController {
   }
 
   void addItem(BuildContext context, Accessory accessory) {
-    if (!basketItems.contains(accessory)) {
+    if (!isInBasket(accessory)) {
       basketItems.add(accessory);
       saveBasketToStorage();
       showCustomSnackBar(context, 'Added to Basket',
           '${accessory.name} has been added to your basket');
+    } else {
+      showCustomSnackBar(context, 'Already in Basket',
+          '${accessory.name} is already in your basket');
     }
   }
 
   void removeItem(BuildContext context, Accessory accessory) {
-    basketItems.remove(accessory);
+    basketItems.removeWhere((item) => item.id == accessory.id);
     saveBasketToStorage();
     showCustomSnackBar(context, 'Removed from Basket',
         '${accessory.name} has been removed from your basket');
   }
 
-  void clearBasket(BuildContext context) {
-    basketItems.clear();
-    saveBasketToStorage();
-    showCustomSnackBar(context, 'Basket Cleared',
-        'All items have been removed from your basket');
+  Map<String, List<Accessory>> groupByVehicle() {
+    final grouped = <String, List<Accessory>>{};
+    for (var accessory in basketItems) {
+      final vehicle = accessory.categoryName ?? 'Unknown Vehicle';
+      grouped[vehicle] = [...(grouped[vehicle] ?? []), accessory];
+    }
+    return grouped;
   }
 
+  bool isInBasket(Accessory accessory) {
+    return basketItems.any((item) => item.id == accessory.id);
+  }
   int get itemCount => basketItems.length;
-
-  void submitInquiry(BuildContext context) {
-    // TODO: Implement inquiry submission
-    showCustomSnackBar(context, 'Inquiry Submitted',
-        'Your inquiry has been submitted successfully');
-    clearBasket(context);
-  }
 }

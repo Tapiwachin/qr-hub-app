@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
-import 'package:toyota_accessory_app/core/theme/app_styles.dart';
 import 'package:toyota_accessory_app/models/vehicle.dart';
 
 enum CardType { featured, listing }
@@ -12,11 +11,11 @@ class VehicleCard extends StatelessWidget {
   final CardType cardType;
 
   const VehicleCard({
-    Key? key,
+    super.key,
     required this.vehicle,
     this.onTap,
     this.cardType = CardType.listing,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +81,7 @@ class VehicleCard extends StatelessWidget {
                       ),
                       const SizedBox(height: Spacing.xs),
                       Text(
-                        '2024 Model',
+                        '${vehicle.modelYear} Model',
                         style: AppTheme.textTheme.bodyMedium?.copyWith(
                           color: AppTheme.neutral500,
                         ),
@@ -116,7 +115,7 @@ class VehicleCard extends StatelessWidget {
             child: Hero(
               tag: 'vehicle_${vehicle.id}_featured',
               child: CachedNetworkImage(
-                imageUrl: 'http://localhost:8055/assets/${vehicle.image}',
+                imageUrl: 'http://10.0.2.2:8055/assets/${vehicle.image}',
                 height: 150, // Car image height
                 fit: BoxFit.contain,
                 placeholder: (context, url) => const Center(
@@ -136,68 +135,80 @@ class VehicleCard extends StatelessWidget {
 
 
   Widget _buildListingCard(BuildContext context) {
-    return Container(
-      height: 120, // Explicit height for the listing card
-      margin: EdgeInsets.symmetric(vertical: Spacing.sm, horizontal: Spacing.md),
-      decoration: BoxDecoration(
-        color: AppTheme.neutral100,
-        borderRadius: BorderRadius.circular(Corners.lg),
-        boxShadow: AppTheme.shadowSm,
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(Corners.md),
-            child: CachedNetworkImage(
-              imageUrl: 'http://localhost:8055/assets/${vehicle.image}',
-              width: 120,
-              height: 120,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: AppTheme.neutral200,
-                child: const Center(child: CircularProgressIndicator()),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: AppTheme.neutral200,
-                child: const Icon(Icons.error),
+    return GestureDetector(
+      onTap: onTap, // Ensure the onTap is passed and triggered
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: Spacing.sm, horizontal: Spacing.md),
+        decoration: BoxDecoration(
+          color: Colors.transparent, // Transparent card
+          borderRadius: BorderRadius.circular(Corners.lg),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Vehicle Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(Corners.md),
+              child: CachedNetworkImage(
+                imageUrl: 'http://10.0.2.2:8055/assets/${vehicle.image}',
+                height: 150, // Adjust image height
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: AppTheme.neutral200,
+                  child: const Center(child: CircularProgressIndicator()),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: AppTheme.neutral200,
+                  child: const Icon(Icons.error),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: Spacing.md),
-          Expanded(
-            child: _buildContentSection(context),
-          ),
-        ],
+            const SizedBox(height: 8.0),
+            // Vehicle Title and Year Section
+            _buildContentSection(context),
+          ],
+        ),
       ),
     );
   }
 
+
   Widget _buildContentSection(BuildContext context, {bool isFeatured = false}) {
     return Column(
-      crossAxisAlignment:
-      isFeatured ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
+        // Red Line
+        Container(
+          width: 40,
+          height: 3,
+          color: AppTheme.primary, // Red line color
+        ),
+        const SizedBox(height: 4.0),
+        // Vehicle Title
         Text(
           vehicle.name,
           style: AppTheme.textTheme.headlineMedium?.copyWith(
-            fontWeight: isFeatured ? FontWeight.bold : FontWeight.w600,
-            color: isFeatured ? AppTheme.neutral100 : AppTheme.neutral900,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.neutral100, // White text
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          textAlign: isFeatured ? TextAlign.center : TextAlign.left,
+          textAlign: TextAlign.center,
         ),
-        const SizedBox(height: Spacing.xs),
+        const SizedBox(height: 4.0),
+        // Year Model
         Text(
-          '2024 Model',
+          '${vehicle.modelYear} Model',
           style: AppTheme.textTheme.bodyMedium?.copyWith(
-            color: isFeatured ? AppTheme.primary : AppTheme.neutral600,
+            color: AppTheme.neutral500, // Lighter text for model year
+            fontSize: 12.0,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          textAlign: isFeatured ? TextAlign.center : TextAlign.left,
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
+
+
 }

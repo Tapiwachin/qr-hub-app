@@ -138,7 +138,8 @@ class _FeaturedVehiclesSection extends StatefulWidget {
   const _FeaturedVehiclesSection({required this.controller});
 
   @override
-  State<_FeaturedVehiclesSection> createState() => _FeaturedVehiclesSectionState();
+  State<_FeaturedVehiclesSection> createState() =>
+      _FeaturedVehiclesSectionState();
 }
 
 class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
@@ -166,125 +167,135 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
   Widget build(BuildContext context) {
     final featuredVehicles = widget.controller.vehicles.take(5).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Heading Section
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Spacing.md),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: 'Explore our diverse selection of ',
-                      style: AppTheme.textTheme.headlineMedium?.copyWith(
-                        fontSize: 30,
-                        height: 63 / 55,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 0.88,
-                        color: AppTheme.neutral900,
-                      ),
-                    ),
-                    TextSpan(
-                      text: 'Toyota Accessories.',
-                      style: AppTheme.textTheme.headlineMedium?.copyWith(
-                        fontSize: 30,
-                        height: 63 / 55,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 0,
-                        color: AppTheme.neutral900,
-                      ),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.left,
-              ),
-              const SizedBox(height: Spacing.sm),
-              Row(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isSmallDevice = constraints.maxHeight < 600; // Detect small screens
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Heading Section
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Spacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'FEATURED MODELS',
-                    style: TextStyle(
-                      color: AppTheme.primary,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Explore our diverse selection of ',
+                          style: AppTheme.textTheme.headlineMedium?.copyWith(
+                            fontSize: isSmallDevice ? 24 : 30, // Adjust font size
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.neutral900,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Toyota Accessories.',
+                          style: AppTheme.textTheme.headlineMedium?.copyWith(
+                            fontSize: isSmallDevice ? 24 : 30, // Adjust font size
+                            fontWeight: FontWeight.w900,
+                            color: AppTheme.neutral900,
+                          ),
+                        ),
+                      ],
                     ),
+                    textAlign: TextAlign.left,
                   ),
-                  const Spacer(),
-                  TextButton.icon(
-                    onPressed: () => Get.toNamed(AppRoutes.VEHICLE_LIST),
-                    icon: const Icon(Icons.arrow_forward,
-                        size: 18, color: AppTheme.neutral900),
-                    label: Text(
-                      'View All',
-                      style: AppTheme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.neutral900,
+                  const SizedBox(height: Spacing.sm),
+                  Row(
+                    children: [
+                      Text(
+                        'FEATURED MODELS',
+                        style: TextStyle(
+                          color: AppTheme.primary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
+                      const Spacer(),
+                      TextButton.icon(
+                        onPressed: () =>
+                            Get.toNamed(AppRoutes.VEHICLE_LIST),
+                        icon: const Icon(
+                          Icons.arrow_forward,
+                          size: 18,
+                          color: AppTheme.neutral900,
+                        ),
+                        label: Text(
+                          'View All',
+                          style: AppTheme.textTheme.bodyMedium?.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.neutral900,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        const SizedBox(height: Spacing.sm),
-
-        // Carousel Section
-        SizedBox(
-          height: 300, // Adjust to the desired card height
-          child: PageView.builder(
-            controller: _pageController,
-            physics: const BouncingScrollPhysics(),
-            itemCount: featuredVehicles.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? Spacing.md : Spacing.xs,
-                  right: index == featuredVehicles.length - 1 ? Spacing.md : Spacing.xs,
-                ),
-                child: VehicleCard(
-                  vehicle: featuredVehicles[index],
-                  onTap: () => Get.toNamed(
-                    AppRoutes.VEHICLE_DETAIL,
-                    arguments: featuredVehicles[index],
-                  ),
-                  cardType: CardType.featured, // Use featured layout
-                ),
-              );
-            },
-          ),
-        ),
-
-
-        const SizedBox(height: Spacing.sm),
-
-        // Scroll Progress Bar
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Spacing.md),
-          child: Container(
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppTheme.neutral300, // Light gray background
-              borderRadius: BorderRadius.circular(2),
             ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: (_currentPage + 1) / (featuredVehicles.length),
+            const SizedBox(height: Spacing.sm),
+
+            // Carousel Section
+            SizedBox(
+              height: isSmallDevice ? 250 : 300, // Adjust height for small devices
+              child: PageView.builder(
+                controller: _pageController,
+                physics: const BouncingScrollPhysics(),
+                itemCount: featuredVehicles.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? Spacing.md : Spacing.xs,
+                      right: index == featuredVehicles.length - 1
+                          ? Spacing.md
+                          : Spacing.xs,
+                    ),
+                    child: VehicleCard(
+                      vehicle: featuredVehicles[index],
+                      onTap: () => Get.toNamed(
+                        AppRoutes.VEHICLE_DETAIL,
+                        arguments: featuredVehicles[index],
+                      ),
+                      cardType: CardType.featured,
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: Spacing.sm),
+
+            // Scroll Progress Bar
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: Spacing.md),
               child: Container(
+                height: 4,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  color: AppTheme.primary, // Toyota Red
+                  color: AppTheme.neutral300,
                   borderRadius: BorderRadius.circular(2),
+                ),
+                child: FractionallySizedBox(
+                  alignment: Alignment.centerLeft,
+                  widthFactor: featuredVehicles.isNotEmpty
+                      ? (_currentPage + 1) / featuredVehicles.length
+                      : 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
+

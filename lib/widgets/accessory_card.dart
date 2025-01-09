@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
-import 'package:toyota_accessory_app/core/theme/app_styles.dart';
 import 'package:toyota_accessory_app/models/accessory.dart';
 
 class AccessoryCard extends StatelessWidget {
@@ -22,190 +21,157 @@ class AccessoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: AppStyles.elevatedCardDecoration,
-      clipBehavior: Clip.antiAlias,
-      margin: EdgeInsets.all(Spacing.sm),
-      height: 120, // Fixed height for horizontal cards
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          child: Row(
-            children: [
-              // Left: Image
-              SizedBox(
-                width: 120, // Square aspect ratio
-                child: _buildImageSection(),
-              ),
-              // Middle: Content
-              Expanded(
-                child: _buildContentSection(context),
-              ),
-              // Right: Actions
-              _buildActionsSection(context),
-            ],
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-        ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildActionsSection(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(Spacing.sm),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          IconButton(
-            onPressed: onWishlistTap,
-            icon: Icon(
-              isInWishlist ? Icons.favorite : Icons.favorite_border,
-              color: isInWishlist ? AppTheme.primary : AppTheme.neutral700,
-            ),
-          ),
-          IconButton(
-            onPressed: onTap,
-            icon: Icon(
-              Icons.shopping_cart_outlined,
-              color: AppTheme.primary,
-            ),
-          ),
+          // Image on the left
+          _buildImageSection(),
+
+          // Content on the right
+          Expanded(child: _buildContentSection(context)),
         ],
       ),
     );
   }
 
   Widget _buildImageSection() {
-    return Stack(
-      children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: accessory.image != null && accessory.image!.isNotEmpty
-              ? CachedNetworkImage(
-            imageUrl: accessory.image!,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => _buildPlaceholder(),
-            errorWidget: (context, url, error) => _buildErrorWidget(),
-          )
-              : _buildErrorWidget(),
-        ),
-        if (onWishlistTap != null)
-          Positioned(
-            top: Spacing.sm,
-            right: Spacing.sm,
-            child: _buildWishlistButton(),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildPlaceholder() {
     return Container(
-      color: AppTheme.neutral200,
-      child: Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
-          strokeWidth: 2,
-        ),
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        color: AppTheme.neutral200,
+        borderRadius: BorderRadius.circular(8),
       ),
-    );
-  }
-
-  Widget _buildErrorWidget() {
-    return Container(
-      color: AppTheme.neutral200,
-      child: Center(
-        child: Icon(
-          Icons.image_not_supported_outlined,
+      child: accessory.image != null && accessory.image!.isNotEmpty
+          ? CachedNetworkImage(
+        imageUrl: accessory.image!,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        errorWidget: (context, url, error) => Icon(
+          Icons.image_not_supported,
+          size: 40,
           color: AppTheme.neutral500,
-          size: 32,
         ),
-      ),
-    );
-  }
-
-  Widget _buildWishlistButton() {
-    return Material(
-      color: AppTheme.neutral100.withOpacity(0.9),
-      shape: CircleBorder(),
-      child: InkWell(
-        onTap: onWishlistTap,
-        customBorder: CircleBorder(),
-        child: Padding(
-          padding: EdgeInsets.all(Spacing.xs),
-          child: Icon(
-            isInWishlist ? Icons.favorite : Icons.favorite_border,
-            color: isInWishlist ? AppTheme.primary : AppTheme.neutral700,
-            size: 20,
-          ),
-        ),
+      )
+          : Icon(
+        Icons.image_not_supported,
+        size: 40,
+        color: AppTheme.neutral500,
       ),
     );
   }
 
   Widget _buildContentSection(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(Spacing.md),
+      padding: const EdgeInsets.only(left: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Title
           Text(
             accessory.name,
-            style: AppTheme.textTheme.titleMedium,
+            style: const TextStyle(
+              color: Color(0xFFD1031F), // Toyota Red
+              fontWeight: FontWeight.bold,
+              fontSize: 20,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 6),
+
+          // Part Number
+          Text(
+            'Part: ${accessory.partNumber ?? "N/A"}',
+            style: const TextStyle(
+              color: Color(0xFF333333), // Dark Grey
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 6),
+
+          // Description
+          Text(
+            accessory.description ?? 'No description available.',
+            style: const TextStyle(
+              color: Color(0xFF666666), // Light Grey
+              fontSize: 12,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          ...[
-          SizedBox(height: Spacing.xs),
-          Text(
-            'Part: ${accessory.partNumber}',
-            style: AppTheme.textTheme.bodySmall?.copyWith(
-              color: AppTheme.neutral600,
-            ),
-          ),
-        ],
-        ],
-      ),
-    );
-  }
+          const SizedBox(height: 12),
 
-  Widget _buildFooterSection(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        Spacing.md,
-        0,
-        Spacing.md,
-        Spacing.md,
-      ),
-      child: Row(
-        children: [
-          if (accessory.price != null)
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: Spacing.sm,
-                vertical: Spacing.xs,
-              ),
-              decoration: AppStyles.priceTagDecoration(),
-              child: Text(
-                '\$${accessory.price!.toStringAsFixed(2)}',
-                style: AppTheme.textTheme.titleMedium?.copyWith(
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.w600,
+          // Buttons
+          Row(
+            children: [
+              // Bookmark/Wishlist Button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: onWishlistTap,
+                  icon: Icon(
+                    isInWishlist ? Icons.bookmark : Icons.bookmark_border,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  label: const Text('Bookmark'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF333333), // Dark Grey
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          Spacer(),
-          TextButton.icon(
-            onPressed: onTap,
-            icon: Icon(Icons.shopping_cart_outlined),
-            label: Text('Add to Cart'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppTheme.primary,
-              padding: EdgeInsets.symmetric(
-                horizontal: Spacing.md,
-                vertical: Spacing.xs,
+              const SizedBox(width: 8),
+
+              // Add to Basket Button
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: onTap,
+                  icon: const Icon(
+                    Icons.shopping_cart_outlined,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  label: const Text('Basket'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFD1031F), // Toyota Red
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),

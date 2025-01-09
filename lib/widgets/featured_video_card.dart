@@ -10,10 +10,10 @@ class FeaturedVideoCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const FeaturedVideoCard({
-    Key? key,
+    super.key,
     required this.video,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -2,9 +2,11 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:toyota_accessory_app/models/accessory.dart';
 import 'package:toyota_accessory_app/services/storage_service.dart';
+import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 
 class WishlistController extends GetxController {
   final StorageService _storageService = Get.find();
+  final BasketController _basketController = Get.find(); // Add BasketController
   final wishlistItems = <Accessory>[].obs;
   static const String storageKey = 'wishlist_items';
 
@@ -74,5 +76,16 @@ class WishlistController extends GetxController {
     saveWishlistToStorage();
     showCustomSnackBar(context, 'Wishlist Cleared',
         'All items have been removed from your wishlist');
+  }
+
+  void addToBasket(BuildContext context, Accessory accessory) {
+    if (!_basketController.isInBasket(accessory)) {
+      _basketController.addItem(context, accessory);
+      showCustomSnackBar(context, 'Added to Basket',
+          '${accessory.name} has been added to your basket');
+    } else {
+      showCustomSnackBar(context, 'Already in Basket',
+          '${accessory.name} is already in your basket');
+    }
   }
 }

@@ -18,14 +18,11 @@ class VehicleDetailScreen extends GetView<VehicleDetailController> {
     return Scaffold(
       body: Obx(() {
         final vehicle = controller.vehicle.value;
-        if (vehicle == null) {
-          return const Center(child: CircularProgressIndicator());
-        }
 
         return NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
             _buildSliverAppBar(vehicle),
-            _buildTabBar(),
+            _buildTabBarWithSearch(),
           ],
           body: TabBarView(
             controller: controller.tabController,
@@ -41,72 +38,167 @@ class VehicleDetailScreen extends GetView<VehicleDetailController> {
   }
 
   Widget _buildSliverAppBar(Vehicle vehicle) {
+    print('Title: ${vehicle.name}');
+    print('Image: ${vehicle.image}');
+
     return SliverAppBar(
-      expandedHeight: 200,
+      expandedHeight: 300,
       pinned: true,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: () => Get.back(),
       ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.search),
-          onPressed: () => _showSearchModal(),
-        ),
-      ],
       flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          vehicle.name,
-          style: AppTheme.textTheme.titleLarge?.copyWith(
-            color: AppTheme.neutral100,
-          ),
-        ),
-        background: Stack(
-          fit: StackFit.expand,
+        background: Column(
           children: [
-            CachedNetworkImage(
-              imageUrl: 'http://localhost:8055/assets/${vehicle.image}',
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: AppTheme.neutral200,
+            // Cover Image Section
+            Expanded(
+              child: Container(
+                color: AppTheme.neutral900, // Dark grey background
                 child: Center(
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
+                  child: vehicle.image != null && vehicle.image!.isNotEmpty
+                      ? CachedNetworkImage(
+                    imageUrl: 'http://10.0.2.2:8055/assets/${vehicle.image}',
+                    fit: BoxFit.contain,
+                    placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.image_not_supported,
+                      size: 80,
+                      color: AppTheme.neutral300,
+                    ),
+                  )
+                      : Icon(
+                    Icons.image_not_supported,
+                    size: 80,
+                    color: AppTheme.neutral300,
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) => Container(
-                color: AppTheme.neutral200,
-                child: Icon(Icons.error, color: AppTheme.neutral500),
+            ),
+            // Title and Model Year Section
+            Container(
+              color: AppTheme.neutral900, // Same dark background as cover
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    vehicle.name,
+                    style: AppTheme.textTheme.headlineMedium?.copyWith(
+                      color: AppTheme.neutral100,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    vehicle.modelYear ?? 'Unknown Model Year',
+                    style: AppTheme.textTheme.bodyLarge?.copyWith(
+                      color: AppTheme.neutral500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
               ),
             ),
-            Container(decoration: AppStyles.gradientOverlay),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildTabBarWithSearch() {
     return SliverPersistentHeader(
       pinned: true,
-      delegate: _SliverTabBarDelegate(
-        TabBar(
-          controller: controller.tabController,
-          indicatorColor: AppTheme.primary,
-          labelColor: AppTheme.primary,
-          unselectedLabelColor: AppTheme.neutral600,
-          indicatorWeight: 3,
-          labelStyle: AppTheme.textTheme.labelLarge,
-          unselectedLabelStyle: AppTheme.textTheme.labelLarge,
-          tabs: const [
-            Tab(text: 'Exterior'),
-            Tab(text: 'Interior'),
-          ],
+      delegate: _CustomSliverTabBarDelegate(
+        child: Container(
+          color: AppTheme.neutral900, // Dark grey background matching the header
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Grouped Tabs Section
+              Expanded(
+                flex: 2,
+                child: Container(
+                  height: 50, // Height for the grouped tabs
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A1A), // Dark background color
+                    borderRadius: BorderRadius.circular(31), // Rounded corners for entire group
+                  ),
+                  child: TabBar(
+                    controller: controller.tabController,
+                    indicator: BoxDecoration(
+                      color: const Color(0xFFD1031F), // Active tab color (Toyota red)
+                      borderRadius: BorderRadius.circular(25), // Rounded corners for active tab
+                    ),
+                    indicatorPadding: const EdgeInsets.all(5), // Space around the active tab
+                    labelPadding: const EdgeInsets.symmetric(
+                      vertical: 8, // Smaller padding top and bottom
+                      horizontal: 20, // Larger padding left and right for longer buttons
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab, // Indicator covers the full tab
+                    labelColor: Colors.white, // Text color for active tab
+                    unselectedLabelColor: Colors.grey, // Text color for inactive tabs
+                    labelStyle: const TextStyle(
+                      fontSize: 14, // Font size for the tab text
+                      fontWeight: FontWeight.bold,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontSize: 14, // Font size for inactive tab text
+                      fontWeight: FontWeight.normal,
+                    ),
+                    tabs: const [
+                      Tab(text: 'Exterior'),
+                      Tab(text: 'Interior'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16), // Space between tabs and search bar
+
+              // Search Field Section
+              Expanded(
+                flex: 1,
+                child: Container(
+                  height: 50, // Height for the search field
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1A1A1A), // Dark background color
+                    borderRadius: BorderRadius.circular(31), // Rounded corners
+                  ),
+                  child: TextField(
+                    controller: controller.searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search accessories',
+                      filled: true,
+                      fillColor: const Color(0xFF1A1A1A), // Matches background
+                      prefixIcon: const Icon(Icons.search, color: Color(0xFFD1031F)), // Red icon
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(31), // Match styling
+                        borderSide: BorderSide.none, // No border
+                      ),
+                      hintStyle: const TextStyle(
+                        color: Colors.grey, // Light grey hint text
+                        fontSize: 14,
+                      ),
+                    ),
+                    style: const TextStyle(
+                      color: Colors.white, // Text color for input
+                      fontSize: 14,
+                    ),
+                    onChanged: controller.onSearchChanged,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+
 
   Widget _buildAccessoryList(RxList<Accessory> accessories) {
     return Obx(() {
@@ -130,6 +222,7 @@ class VehicleDetailScreen extends GetView<VehicleDetailController> {
         itemCount: accessories.length,
         itemBuilder: (context, index) {
           final accessory = accessories[index];
+          print('Tapiwa Accessory Data: ${accessory.toJson()}'); // Debug log
           return AccessoryCard(
             accessory: accessory,
             onTap: () => controller.onAccessoryTap(accessory, context),
@@ -142,60 +235,24 @@ class VehicleDetailScreen extends GetView<VehicleDetailController> {
   }
 
   void _showSearchModal() {
-    Get.bottomSheet(
-      Container(
-        padding: EdgeInsets.all(Spacing.md),
-        decoration: BoxDecoration(
-          color: AppTheme.neutral100,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(Corners.lg),
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller.searchController,
-              decoration: InputDecoration(
-                hintText: 'Search accessories...',
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: AppTheme.neutral600,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(Corners.md),
-                ),
-              ),
-              onChanged: controller.onSearchChanged,
-            ),
-            SizedBox(height: Spacing.md),
-          ],
-        ),
-      ),
-      isScrollControlled: true,
-    );
+    // Removed redundant search modal
   }
 }
 
-class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final TabBar tabBar;
+class _CustomSliverTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
 
-  _SliverTabBarDelegate(this.tabBar);
+  _CustomSliverTabBarDelegate({required this.child});
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: AppTheme.neutral100,
-      child: tabBar,
-    );
+    return child;
   }
 
   @override
-  double get maxExtent => tabBar.preferredSize.height;
-
+  double get maxExtent => 60.0; // Adjust height as needed
   @override
-  double get minExtent => tabBar.preferredSize.height;
-
+  double get minExtent => 60.0; // Adjust height as needed
   @override
-  bool shouldRebuild(covariant _SliverTabBarDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => true;
 }

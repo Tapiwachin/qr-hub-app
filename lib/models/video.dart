@@ -26,6 +26,18 @@ class Video {
     );
   }
 
+  /// Converts the Video object to a JSON-like Map for debugging or serialization.
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'video_url': videoUrl,
+      'thumbnail_image': thumbnailImage,
+      'description': description,
+      'duration': duration,
+    };
+  }
+
   String? get thumbnailUrl => thumbnailImage != null
       ? 'http://localhost:8055/assets/$thumbnailImage'
       : null;

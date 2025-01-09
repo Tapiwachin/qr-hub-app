@@ -7,11 +7,11 @@ import 'package:toyota_accessory_app/controllers/wishlist_controller.dart';
 import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
-class VehicleDetailController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+class VehicleDetailController extends GetxController with GetSingleTickerProviderStateMixin {
   final ApiService _apiService = Get.find();
   final WishlistController _wishlistController = Get.find();
   final BasketController _basketController = Get.find();
+
   final vehicle = Vehicle.empty().obs;
   final exteriorAccessories = <Accessory>[].obs;
   final interiorAccessories = <Accessory>[].obs;
@@ -29,6 +29,7 @@ class VehicleDetailController extends GetxController
     final Vehicle? vehicleData = Get.arguments as Vehicle?;
     if (vehicleData != null) {
       vehicle.value = vehicleData;
+      print('Vehicle Data testing taps: ${vehicleData.toJson()}'); // Debug log
       fetchAccessories();
     } else {
       Get.snackbar('Error', 'Failed to load vehicle data');
@@ -38,29 +39,37 @@ class VehicleDetailController extends GetxController
   Future<void> fetchAccessories() async {
     isLoading.value = true;
     try {
-      final accessories = await _apiService.getAccessoriesForVehicle(vehicle.value.id);
+      final vehicleData = await _apiService.getVehicleById(vehicle.value.id);
 
-      // Clear lists to avoid duplication
+      vehicle.value = vehicleData;
+
+      // Flatten the accessories structure
+      final accessories = vehicleData.accessories?.map((a) => a.accessoriesId).toList();
+
       exteriorAccessories.clear();
       interiorAccessories.clear();
 
-      // Filter accessories based on type
-      for (final accessory in accessories) {
-        if (accessory.type == 'exterior') {
-          exteriorAccessories.add(accessory);
-        } else if (accessory.type == 'interior') {
-          interiorAccessories.add(accessory);
+      for (final accessory in accessories ?? []) {
+        if (accessory != null) {
+          print('Accessory: ${accessory.name}, Type: ${accessory.type}');
+          if (accessory.type?.toLowerCase() == 'exterior') {
+            exteriorAccessories.add(accessory);
+          } else if (accessory.type?.toLowerCase() == 'interior') {
+            interiorAccessories.add(accessory);
+          }
         }
       }
 
       print('Exterior Accessories: ${exteriorAccessories.length}');
       print('Interior Accessories: ${interiorAccessories.length}');
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load accessories');
+      Get.snackbar('Error', 'Failed to load vehicle data');
     } finally {
       isLoading.value = false;
     }
   }
+
+
 
 
   void onSearchChanged(String query) {

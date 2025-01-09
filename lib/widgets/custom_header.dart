@@ -5,7 +5,7 @@ import 'package:toyota_accessory_app/core/utils/extensions.dart'; // Add this im
 
 // lib/widgets/custom_header.dart
 class CustomHeader extends StatelessWidget {
-  const CustomHeader({Key? key}) : super(key: key);
+  const CustomHeader({super.key});
 
   @override
   Widget build(BuildContext context) {

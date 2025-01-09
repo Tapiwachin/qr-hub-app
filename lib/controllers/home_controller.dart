@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toyota_accessory_app/models/vehicle.dart';
 import 'package:toyota_accessory_app/models/video.dart';
-import 'package:toyota_accessory_app/widgets/featured_video_card.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:toyota_accessory_app/services/api_service.dart';
 
 class HomeController extends GetxController {

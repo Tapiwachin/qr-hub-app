@@ -10,44 +10,77 @@ class VehicleListScreen extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
+    // Observable for search query
+    final searchQuery = ''.obs;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('All Vehicles'),
       ),
       body: SafeArea(
-        child: Obx(() {
-          if (controller.isLoading.value && controller.vehicles.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (controller.vehicles.isEmpty) {
-            return const Center(
-              child: Text('No vehicles found'),
-            );
-          }
-
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // Two items per row
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 3 / 4, // Adjust as needed for your design
-            ),
-            itemCount: controller.vehicles.length,
-            itemBuilder: (context, index) {
-              final vehicle = controller.vehicles[index];
-              return VehicleCard(
-                vehicle: vehicle,
-                onTap: () => Get.toNamed(
-                  AppRoutes.VEHICLE_DETAIL,
-                  arguments: vehicle,
+        child: Column(
+          children: [
+            // Search Field
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                onChanged: (value) {
+                  searchQuery.value = value;
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search vehicles...',
+                  prefixIcon: const Icon(Icons.search),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
-                cardType: CardType.listing, // Specify the card type for listing
-              );
-            },
-          );
-        }),
+              ),
+            ),
+            // Vehicle List
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value && controller.vehicles.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                // Filtered list based on search query
+                final filteredVehicles = controller.vehicles.where((vehicle) {
+                  final query = searchQuery.value.toLowerCase();
+                  return vehicle.name.toLowerCase().contains(query) ||
+                      vehicle.modelYear.toString().contains(query);
+                }).toList();
+
+                if (filteredVehicles.isEmpty) {
+                  return const Center(
+                    child: Text('No vehicles found'),
+                  );
+                }
+
+                return GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // Two items per row
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
+                    childAspectRatio: 3 / 4, // Adjust as needed for your design
+                  ),
+                  itemCount: filteredVehicles.length,
+                  itemBuilder: (context, index) {
+                    final vehicle = filteredVehicles[index];
+                    return VehicleCard(
+                      vehicle: vehicle,
+                      onTap: () => Get.toNamed(
+                        AppRoutes.VEHICLE_DETAIL,
+                        arguments: vehicle,
+                      ),
+                      cardType: CardType.listing, // Specify the card type for listing
+                    );
+                  },
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }

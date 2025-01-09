@@ -1,4 +1,3 @@
-// lib/models/accessory.dart
 class Accessory {
   final String id;
   final String name;
@@ -7,8 +6,8 @@ class Accessory {
   final String? image;
   final String? description;
   final double? price;
-  final String category; // Keep the category ID
-  final String? categoryName; // Store the category name
+  final String category;
+  final String? categoryName;
   final String? accessoryType;
   final bool? availability;
 
@@ -35,14 +34,12 @@ class Accessory {
       image: json['image'],
       description: json['description'],
       price: json['price']?.toDouble(),
-      category: json['category']?['id'] ?? '', // Extract category ID
-      categoryName: json['category']?['name'] ?? '', // Extract category name
+      category: json['category']?['id'] ?? '',
+      categoryName: json['category']?['name'],
       accessoryType: json['accessory_type'],
       availability: json['availability'],
     );
   }
-
-  get isNew => null;
 
   Map<String, dynamic> toJson() {
     return {
