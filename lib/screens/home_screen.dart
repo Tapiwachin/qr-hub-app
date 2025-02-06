@@ -28,9 +28,9 @@ class HomeScreen extends GetView<HomeController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 0),
                       _VideoSection(controller: controller),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 32),
                       _FeaturedVehiclesSection(controller: controller),
                     ],
                   ),
@@ -149,7 +149,7 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.85)
+    _pageController = PageController(viewportFraction: 0.8) // Adjusted viewport
       ..addListener(() {
         setState(() {
           _currentPage = _pageController.page ?? 0;
@@ -169,13 +169,14 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isSmallDevice = constraints.maxHeight < 600; // Detect small screens
+        final isSmallDevice =
+            constraints.maxHeight < 600; // Detect small screens
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Heading Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Spacing.md),
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -185,7 +186,7 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
                         TextSpan(
                           text: 'Explore our diverse selection of ',
                           style: AppTheme.textTheme.headlineMedium?.copyWith(
-                            fontSize: isSmallDevice ? 24 : 30, // Adjust font size
+                            fontSize: isSmallDevice ? 24 : 30,
                             fontWeight: FontWeight.w600,
                             color: AppTheme.neutral900,
                           ),
@@ -193,7 +194,7 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
                         TextSpan(
                           text: 'Toyota Accessories.',
                           style: AppTheme.textTheme.headlineMedium?.copyWith(
-                            fontSize: isSmallDevice ? 24 : 30, // Adjust font size
+                            fontSize: isSmallDevice ? 24 : 30,
                             fontWeight: FontWeight.w900,
                             color: AppTheme.neutral900,
                           ),
@@ -215,8 +216,7 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
                       ),
                       const Spacer(),
                       TextButton.icon(
-                        onPressed: () =>
-                            Get.toNamed(AppRoutes.VEHICLE_LIST),
+                        onPressed: () => Get.toNamed(AppRoutes.VEHICLE_LIST),
                         icon: const Icon(
                           Icons.arrow_forward,
                           size: 18,
@@ -240,19 +240,15 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
 
             // Carousel Section
             SizedBox(
-              height: isSmallDevice ? 250 : 300, // Adjust height for small devices
+              height: isSmallDevice ? 250 : 300, // Carousel height
               child: PageView.builder(
                 controller: _pageController,
                 physics: const BouncingScrollPhysics(),
                 itemCount: featuredVehicles.length,
                 itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      left: index == 0 ? Spacing.md : Spacing.xs,
-                      right: index == featuredVehicles.length - 1
-                          ? Spacing.md
-                          : Spacing.xs,
-                    ),
+                  return SizedBox(
+                    width: MediaQuery.of(context).size.width *
+                        0.8, // 80% of screen width
                     child: VehicleCard(
                       vehicle: featuredVehicles[index],
                       onTap: () => Get.toNamed(
@@ -265,28 +261,32 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
                 },
               ),
             ),
-
             const SizedBox(height: Spacing.sm),
 
             // Scroll Progress Bar
+// Scroll Progress Bar
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: Spacing.md),
-              child: Container(
-                height: 4,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: AppTheme.neutral300,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-                child: FractionallySizedBox(
-                  alignment: Alignment.centerLeft,
-                  widthFactor: featuredVehicles.isNotEmpty
-                      ? (_currentPage + 1) / featuredVehicles.length
-                      : 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary,
-                      borderRadius: BorderRadius.circular(2),
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.md),
+              child: Center(
+                // Center the progress bar
+                child: Container(
+                  height: 4,
+                  width:
+                      300, // Set a specific width to reduce the progress bar width
+                  decoration: BoxDecoration(
+                    color: AppTheme.neutral400,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: FractionallySizedBox(
+                    alignment: Alignment.centerLeft,
+                    widthFactor: featuredVehicles.isNotEmpty
+                        ? (_currentPage + 1) / featuredVehicles.length
+                        : 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
                     ),
                   ),
                 ),
@@ -298,4 +298,3 @@ class _FeaturedVehiclesSectionState extends State<_FeaturedVehiclesSection> {
     );
   }
 }
-

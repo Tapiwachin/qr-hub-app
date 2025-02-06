@@ -1,4 +1,3 @@
-// lib/screens/vehicle_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toyota_accessory_app/controllers/home_controller.dart';
@@ -28,14 +27,33 @@ class VehicleListScreen extends GetView<HomeController> {
                   searchQuery.value = value;
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search vehicles...',
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                  hintText: 'Search vehicle model...',
+                  hintStyle: const TextStyle(
+                    color: Color(0xFFB0B0B0), // Light grey for placeholder text
+                    fontSize: 16, // Adjust font size as needed
                   ),
+                  prefixIcon: const Icon(
+                    Icons.search,
+                    color: Color(0xFFB0B0B0), // Light grey for the icon
+                  ),
+                  filled: true,
+                  fillColor: const Color(0xFF1A1A1A), // Dark background
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(41.0), // Large rounded corners
+                    borderSide: BorderSide.none, // Remove border
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 16.0,
+                    horizontal: 20.0, // Adjust padding inside the field
+                  ),
+                ),
+                style: const TextStyle(
+                  color: Colors.white, // White text for user input
+                  fontSize: 16, // Adjust font size as needed
                 ),
               ),
             ),
+
             // Vehicle List
             Expanded(
               child: Obx(() {
@@ -62,18 +80,21 @@ class VehicleListScreen extends GetView<HomeController> {
                     crossAxisCount: 2, // Two items per row
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
-                    childAspectRatio: 3 / 4, // Adjust as needed for your design
+                    childAspectRatio: 4 / 4, // Adjust as needed for your design
                   ),
                   itemCount: filteredVehicles.length,
                   itemBuilder: (context, index) {
                     final vehicle = filteredVehicles[index];
                     return VehicleCard(
                       vehicle: vehicle,
-                      onTap: () => Get.toNamed(
-                        AppRoutes.VEHICLE_DETAIL,
-                        arguments: vehicle,
-                      ),
-                      cardType: CardType.listing, // Specify the card type for listing
+                      onTap: () {
+                        // Directly navigate without recreating or serializing the object
+                        Get.toNamed(
+                          AppRoutes.VEHICLE_DETAIL,
+                          arguments: vehicle,
+                        );
+                      },
+                      cardType: CardType.listing,
                     );
                   },
                 );

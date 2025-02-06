@@ -1,47 +1,44 @@
-// lib/widgets/accessory_card.dart
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
+import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/models/accessory.dart';
 
 class AccessoryCard extends StatelessWidget {
   final Accessory accessory;
-  final VoidCallback? onTap;
   final VoidCallback? onWishlistTap;
   final bool isInWishlist;
 
   const AccessoryCard({
     super.key,
     required this.accessory,
-    this.onTap,
     this.onWishlistTap,
     this.isInWishlist = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final BasketController basketController = Get.find();
+
     return Container(
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [], // No shadow for clean design
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Image on the left
+          // Image Section
           _buildImageSection(),
 
-          // Content on the right
-          Expanded(child: _buildContentSection(context)),
+          // Content Section
+          Expanded(
+            child: _buildContentSection(context, basketController),
+          ),
         ],
       ),
     );
@@ -49,15 +46,19 @@ class AccessoryCard extends StatelessWidget {
 
   Widget _buildImageSection() {
     return Container(
-      width: 100,
-      height: 100,
+      width: 120,
+      height: 120,
       decoration: BoxDecoration(
         color: AppTheme.neutral200,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(45), // Updated border radius
+        border: Border.all(
+          color: const Color(0xFFEEEEEE), // Faint grey border color
+          width: 1.5,
+        ),
       ),
       child: accessory.image != null && accessory.image!.isNotEmpty
           ? CachedNetworkImage(
-        imageUrl: accessory.image!,
+        imageUrl: 'http://192.168.1.208:8055/assets/${accessory.image}',
         fit: BoxFit.cover,
         placeholder: (context, url) => const Center(
           child: CircularProgressIndicator(),
@@ -76,7 +77,8 @@ class AccessoryCard extends StatelessWidget {
     );
   }
 
-  Widget _buildContentSection(BuildContext context) {
+  Widget _buildContentSection(
+      BuildContext context, BasketController basketController) {
     return Padding(
       padding: const EdgeInsets.only(left: 12),
       child: Column(
@@ -88,10 +90,10 @@ class AccessoryCard extends StatelessWidget {
             style: const TextStyle(
               color: Color(0xFFD1031F), // Toyota Red
               fontWeight: FontWeight.bold,
-              fontSize: 20,
+              fontSize: 16, // Reduced font size
             ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            maxLines: 2, // Allow title to span 2 lines
+            overflow: TextOverflow.visible, // No truncation with ellipses
           ),
           const SizedBox(height: 6),
 
@@ -101,7 +103,7 @@ class AccessoryCard extends StatelessWidget {
             style: const TextStyle(
               color: Color(0xFF333333), // Dark Grey
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 12, // Slightly smaller font
             ),
           ),
           const SizedBox(height: 6),
@@ -111,7 +113,7 @@ class AccessoryCard extends StatelessWidget {
             accessory.description ?? 'No description available.',
             style: const TextStyle(
               color: Color(0xFF666666), // Light Grey
-              fontSize: 12,
+              fontSize: 11, // Reduced font size
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -120,24 +122,33 @@ class AccessoryCard extends StatelessWidget {
 
           // Buttons
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures proper spacing
             children: [
-              // Bookmark/Wishlist Button
-              Expanded(
+              // Wishlist Button
+              SizedBox(
+                width: 110, // Fixed width from design
+                height: 32, // Fixed height from design
                 child: ElevatedButton.icon(
                   onPressed: onWishlistTap,
                   icon: Icon(
                     isInWishlist ? Icons.bookmark : Icons.bookmark_border,
                     color: Colors.white,
-                    size: 18,
+                    size: 14, // Icon size per design
                   ),
-                  label: const Text('Bookmark'),
+                  label: const Text(
+                    'Bookmark',
+                    style: TextStyle(fontSize: 10), // Font size from design
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF333333), // Dark Grey
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12, // Side padding
+                      vertical: 5, // Top and bottom padding
+                    ),
                     textStyle: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                      fontSize: 10,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -145,31 +156,47 @@ class AccessoryCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 5), // Gap between buttons
 
               // Add to Basket Button
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: onTap,
-                  icon: const Icon(
-                    Icons.shopping_cart_outlined,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  label: const Text('Basket'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFD1031F), // Toyota Red
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+              SizedBox(
+                width: 120, // Fixed width from design
+                height: 32, // Fixed height from design
+                child: Obx(() {
+                  final itemCount = basketController.itemCountForAccessory(accessory);
+
+                  return ElevatedButton.icon(
+                    onPressed: () {
+                      basketController.addItem(context, accessory);
+                    },
+                    icon: const Icon(
+                      Icons.shopping_cart_outlined,
+                      color: Colors.white,
+                      size: 14, // Icon size per design
                     ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                    label: Text(
+                      itemCount > 0
+                          ? 'Basket | $itemCount' // Show count for the specific accessory
+                          : 'Add to Basket',
+                      style: const TextStyle(fontSize: 10), // Font size from design
                     ),
-                  ),
-                ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFD1031F), // Toyota Red
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12, // Side padding
+                        vertical: 5, // Top and bottom padding
+                      ),
+                      textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  );
+                }),
               ),
             ],
           ),
@@ -177,4 +204,5 @@ class AccessoryCard extends StatelessWidget {
       ),
     );
   }
+
 }

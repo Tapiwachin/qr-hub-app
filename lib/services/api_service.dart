@@ -14,7 +14,7 @@ class ApiService extends GetxService {
   void onInit() {
     super.onInit();
     _dio = Dio(BaseOptions(
-      baseUrl: 'http://10.0.2.2:8055/api-adaptor',
+      baseUrl: 'http://192.168.1.208:8055/api-adaptor',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -183,6 +183,32 @@ class ApiService extends GetxService {
     } catch (e) {
       print('Error fetching dealers: $e');
       throw Exception('Failed to fetch dealers');
+    }
+  }
+
+  // Placeholder for submitDealerInquiry
+  Future<void> submitDealerInquiry({
+    required String dealerId,
+    required String email,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/dealer-inquiries', // Adjust endpoint if necessary
+        data: {
+          'dealer_id': dealerId,
+          'email': email,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Inquiry submitted successfully: ${response.data}');
+      } else {
+        throw Exception(
+            'Failed to submit inquiry: ${response.statusCode} ${response.data}');
+      }
+    } catch (e) {
+      print('Error submitting dealer inquiry: $e');
+      throw Exception('Failed to submit dealer inquiry');
     }
   }
 

@@ -35,11 +35,10 @@ class Vehicle {
   }
 
   factory Vehicle.fromJson(Map<String, dynamic> json) {
+    print('Parsing Vehicle JSON: $json'); // Debug log
     return Vehicle(
       id: json['id'].toString(),
-      accessoryType: json['accessory_type'] is List
-          ? (json['accessory_type'] as List).first.toString()
-          : json['accessory_type'].toString(),
+      accessoryType: json['accessory_type']?.toString() ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       image: json['image'],
@@ -54,6 +53,7 @@ class Vehicle {
       modelYear: json['model_year']?.toString(),
     );
   }
+
 
   /// Converts the Vehicle object to a JSON-like Map for debugging.
   Map<String, dynamic> toJson() {

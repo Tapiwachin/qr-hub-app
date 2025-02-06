@@ -6,10 +6,10 @@ class Accessory {
   final String? image;
   final String? description;
   final double? price;
-  final String category;
+  final String? category;
   final String? categoryName;
   final String? accessoryType;
-  final bool? availability;
+  final String? availability;
 
   Accessory({
     required this.id,
@@ -19,7 +19,7 @@ class Accessory {
     this.image,
     this.description,
     this.price,
-    required this.category,
+    this.category,
     this.categoryName,
     this.accessoryType,
     this.availability,
@@ -27,15 +27,15 @@ class Accessory {
 
   factory Accessory.fromJson(Map<String, dynamic> json) {
     return Accessory(
-      id: json['id'].toString(),
+      id: json['id'].toString(), // Convert to String if necessary
       name: json['name'] ?? '',
       type: json['type'] ?? '',
       partNumber: json['part_number'] ?? '',
       image: json['image'],
       description: json['description'],
-      price: json['price']?.toDouble(),
-      category: json['category']?['id'] ?? '',
-      categoryName: json['category']?['name'],
+      price: json['price'] != null ? double.tryParse(json['price'].toString()) : null,
+      category: json['category'] ?? '',
+      categoryName: json['category_name'],
       accessoryType: json['accessory_type'],
       availability: json['availability'],
     );

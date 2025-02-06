@@ -88,4 +88,5 @@ class WishlistController extends GetxController {
           '${accessory.name} is already in your basket');
     }
   }
+  int get itemCount => wishlistItems.length; // For WishlistController
 }

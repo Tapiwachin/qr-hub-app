@@ -77,8 +77,16 @@ class BasketController extends GetxController {
     return grouped;
   }
 
+  int get itemCount => basketItems.length;
+  int basketCount() {
+    return basketItems.length;
+  }
+  int itemCountForAccessory(Accessory accessory) {
+    return basketItems.where((item) => item.id == accessory.id).length;
+  }
+
   bool isInBasket(Accessory accessory) {
     return basketItems.any((item) => item.id == accessory.id);
   }
-  int get itemCount => basketItems.length;
+
 }

@@ -8,6 +8,8 @@ class Dealer {
   final String? servicesOffered;
   final bool? isToyotaDealer;
   final bool? thirdPartyAap;
+  final double? latitude;
+  final double? longitude;
 
   Dealer({
     required this.id,
@@ -19,19 +21,27 @@ class Dealer {
     this.servicesOffered,
     this.isToyotaDealer,
     this.thirdPartyAap,
+    this.latitude,
+    this.longitude,
   });
 
   factory Dealer.fromJson(Map<String, dynamic> json) {
     return Dealer(
-      id: json['id'].toString(),
-      name: json['name'] ?? '',
-      location: json['location'],
-      address: json['address'],
-      contactNumber: json['contact_number'],
-      email: json['email'],
-      servicesOffered: json['services_offered'],
-      isToyotaDealer: json['is_toyota_dealer'],
-      thirdPartyAap: json['third_party_aap'],
+      id: json['id'].toString(), // Always convert ID to string
+      name: json['name'] ?? '', // Provide a default empty string if null
+      location: json['location'] as String?, // Cast explicitly to String?
+      address: json['address'] as String?,
+      contactNumber: json['contact_number'] as String?,
+      email: json['email'] as String?,
+      servicesOffered: json['services_offered'] as String?,
+      isToyotaDealer: json['is_toyota_dealer'] as bool?,
+      thirdPartyAap: json['third_party_aap'] as bool?,
+      latitude: json['latitude'] != null
+          ? double.tryParse(json['latitude'].toString()) // Safely parse to double
+          : null,
+      longitude: json['longitude'] != null
+          ? double.tryParse(json['longitude'].toString()) // Safely parse to double
+          : null,
     );
   }
 }

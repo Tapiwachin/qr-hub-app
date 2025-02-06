@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     //   initialRoute: AppRoutes.SPLASH,
     // );
     return GetMaterialApp(
-      title: 'Toyota Accessory App',
+      title: 'Toyota Accessoriess App',
       theme: AppTheme.darkTheme,
       initialBinding: InitialBinding(),
       getPages: AppRoutes.routes,

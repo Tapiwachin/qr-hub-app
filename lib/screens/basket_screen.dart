@@ -14,21 +14,33 @@ class BasketScreen extends GetView<BasketController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // Light grey background
+      backgroundColor: const Color(0xFFEEEEEE), // Light grey background
       body: Column(
         children: [
           // Custom Header
           const CustomHeader(),
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Inquiry Basket',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+
+          // Title with Icon
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0), // Reduced vertical padding
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(Icons.shopping_cart, color: Color(0xFFE50000)), // Dark Grey Icon
+                const SizedBox(width: 8),
+                Text(
+                  'Basket',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333), // Dark Grey Text
+                  ),
+                ),
+              ],
             ),
           ),
+
+          // Accessories List
           Expanded(
             child: Obx(() {
               if (controller.basketItems.isEmpty) {
@@ -47,34 +59,50 @@ class BasketScreen extends GetView<BasketController> {
                 );
               }
 
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: ListView.builder(
-                  itemCount: controller.basketItems.length,
-                  itemBuilder: (context, index) {
-                    final accessory = controller.basketItems[index];
-                    return _buildBasketCard(context, accessory);
-                  },
-                ),
+              return Stack(
+                children: [
+                  // Positioned ListView
+                  Positioned(
+                    top: -60.0, // Simulate negative padding by adjusting the top position
+                    left: 16.0,
+                    right: 16.0,
+                    bottom: 0.0, // Ensure the listview takes up remaining space
+                    child: ListView.builder(
+                      itemCount: controller.basketItems.length,
+                      itemBuilder: (context, index) {
+                        final accessory = controller.basketItems[index];
+                        return _buildBasketCard(context, accessory);
+                      },
+                    ),
+                  ),
+                ],
               );
+
             }),
           ),
         ],
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: Obx(() {
-        return FloatingActionButton.extended(
-          onPressed: controller.basketItems.isEmpty
-              ? null
-              : () {
-            Get.to(() => DealerSelectionScreen());
-          },
-          backgroundColor:
-          controller.basketItems.isEmpty ? Colors.grey : AppTheme.primary,
-          label: Text(
-            'Enquire Now (${controller.basketItems.length})',
-            style: const TextStyle(color: Colors.white),
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 80.0), // Adjust position above the bottom nav
+          child: FloatingActionButton.extended(
+            onPressed: controller.basketItems.isEmpty
+                ? null
+                : () {
+              Get.to(() => DealerSelectionScreen());
+            },
+            backgroundColor:
+            controller.basketItems.isEmpty ? Colors.grey : AppTheme.primary,
+            label: Text(
+              'Enquire Now (${controller.basketItems.length})',
+              style: const TextStyle(color: Colors.white),
+            ),
+            icon: const Icon(Icons.send, color: Colors.white),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30), // Increased radius
+            ),
           ),
-          icon: const Icon(Icons.send, color: Colors.white),
         );
       }),
       bottomNavigationBar: const CustomBottomNavBar(),
@@ -88,22 +116,16 @@ class BasketScreen extends GetView<BasketController> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Image Section
           Container(
-            width: 80,
-            height: 80,
+            width: 150,
+            height: 150,
             decoration: BoxDecoration(
-              border: Border.all(color: AppTheme.neutral200),
+              color: AppTheme.neutral200,
               borderRadius: BorderRadius.circular(8),
             ),
             child: accessory.image != null && accessory.image.isNotEmpty
@@ -125,67 +147,72 @@ class BasketScreen extends GetView<BasketController> {
           ),
           const SizedBox(width: 16),
 
-          // Content Section
+          // Content and Actions Section
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title
                 Text(
                   accessory.name,
-                  style: AppTheme.textTheme.titleMedium?.copyWith(
-                    color: AppTheme.primary,
+                  style: const TextStyle(
+                    color: Color(0xFFD1031F), // Toyota Red
                     fontWeight: FontWeight.bold,
+                    fontSize: 20, // Large font
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
+                // Part Number
                 Text(
                   'Part: ${accessory.partNumber ?? "N/A"}',
-                  style: AppTheme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.neutral700,
+                  style: const TextStyle(
+                    color: Color(0xFF333333), // Dark Grey
                     fontWeight: FontWeight.bold,
+                    fontSize: 14, // Small font
                   ),
                 ),
                 const SizedBox(height: 4),
+                // Description
                 Text(
                   accessory.description ?? 'No description available.',
-                  style: AppTheme.textTheme.bodySmall?.copyWith(
-                    color: AppTheme.neutral500,
-                    fontSize: 12,
+                  style: const TextStyle(
+                    color: Color(0xFF666666), // Light Grey
+                    fontSize: 12, // Small font
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
+                const SizedBox(height: 12),
+                // Counter and Remove Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Counter
+                    ElevatedButton.icon(
+                      onPressed: () {}, // Implement quantity increment logic
+                      icon: const Icon(Icons.add, size: 16),
+                      label: const Text('1'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(60, 30),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                    ),
+
+                    // Delete Button
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline, color: Colors.red),
+                      onPressed: () => controller.removeItem(context, accessory),
+                    ),
+                  ],
+                ),
               ],
             ),
-          ),
-
-          // Quantity and Remove Section
-          Column(
-            children: [
-              // Quantity
-              ElevatedButton.icon(
-                onPressed: () {}, // Implement quantity increment logic
-                icon: const Icon(Icons.add, size: 16),
-                label: const Text('1'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(60, 30),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // Remove Icon
-              IconButton(
-                icon: const Icon(Icons.delete_outline, color: Colors.red),
-                onPressed: () => controller.removeItem(context, accessory),
-              ),
-            ],
           ),
         ],
       ),

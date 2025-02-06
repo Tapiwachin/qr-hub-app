@@ -7,7 +7,7 @@ import 'package:toyota_accessory_app/controllers/wishlist_controller.dart';
 import 'package:toyota_accessory_app/controllers/basket_controller.dart';
 import 'package:toyota_accessory_app/core/theme/app_theme.dart';
 
-class VehicleDetailController extends GetxController with GetSingleTickerProviderStateMixin {
+class VehicleDetailController extends GetxController with GetTickerProviderStateMixin {
   final ApiService _apiService = Get.find();
   final WishlistController _wishlistController = Get.find();
   final BasketController _basketController = Get.find();
@@ -25,10 +25,11 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
     super.onInit();
     tabController = TabController(length: 2, vsync: this);
 
+    resetState();
     // Ensure vehicle is properly passed
     final Vehicle? vehicleData = Get.arguments as Vehicle?;
     if (vehicleData != null) {
-      vehicle.value = vehicleData;
+      vehicle.value = Vehicle.fromJson(vehicleData.toJson());
       print('Vehicle Data testing taps: ${vehicleData.toJson()}'); // Debug log
       fetchAccessories();
     } else {
@@ -149,10 +150,18 @@ class VehicleDetailController extends GetxController with GetSingleTickerProvide
     return _wishlistController.isInWishlist(accessory);
   }
 
+  void resetState() {
+    vehicle.value = Vehicle.empty(); // Reset vehicle data
+    exteriorAccessories.clear(); // Clear accessory lists
+    interiorAccessories.clear();
+  }
+
   @override
   void onClose() {
+    debugPrint("VehicleDetailController is being disposed");
     tabController.dispose();
     searchController.dispose();
     super.onClose();
   }
+
 }
